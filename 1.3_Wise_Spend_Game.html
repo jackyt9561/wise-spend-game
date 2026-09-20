@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大學生存指南：90日財務保衛戰</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; -webkit-tap-highlight-color: transparent; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .progress-bar { transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out; }
+        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; background-color: #ffffff; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); position: relative; display: flex; flex-direction: column; }
+        .hide-on-export { display: flex; }
+        .exporting .hide-on-export { display: none !important; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+<div class="app-container">
+
+    <!-- Language Toggle Button -->
+    <div class="absolute top-4 right-4 z-50">
+        <button onclick="toggleLanguage()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-1.5 px-3.5 rounded-full shadow-sm text-xs border border-gray-300 transition-colors">
+            <span id="lang-toggle-text">EN</span>
+        </button>
+    </div>
+    
+    <!-- Start Screen -->
+    <div id="start-screen" class="flex-1 flex flex-col justify-center items-center p-6 text-center fade-in overflow-y-auto">
+        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <span class="text-3xl">🎓</span>
+        </div>
+        <h1 id="game-title" class="text-2xl font-extrabold text-gray-900 mb-2 tracking-tight"></h1>
+        <p id="game-subtitle" class="text-xs text-blue-600 font-bold mb-4 uppercase tracking-wider"></p>
+        
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-6 text-left w-full shadow-sm">
+            <p id="tutorial-title" class="text-sm font-bold text-gray-800 mb-2"></p>
+            <ul id="tutorial-rules" class="text-xs text-gray-600 space-y-3 leading-relaxed">
+            </ul>
+        </div>
+
+        <button id="start-btn" onclick="startGame()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition-transform transform active:scale-95 text-sm">
+        </button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="hidden flex-1 flex-col h-full fade-in">
+        <!-- Header -->
+        <div class="bg-white px-6 py-4 border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+            <div class="flex justify-between items-end mb-2">
+                <div>
+                    <p id="budget-label" class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5"></p>
+                    <p class="text-xl font-bold text-gray-900 flex items-baseline">
+                        <span class="text-sm text-gray-500 mr-0.5">$</span><span id="money-display">6000</span>
+                    </p>
+                </div>
+                <div class="text-right">
+                    <p id="progress-label" class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-0.5"></p>
+                    <p class="text-xs font-bold text-blue-600 transition-colors duration-300" id="stage-display"></p>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div id="budget-bar" class="progress-bar bg-blue-500 h-1.5 rounded-full" style="width: 100%"></div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="flex justify-between items-end mb-1">
+                    <span id="stress-label" class="text-[10px] font-semibold text-gray-500"></span>
+                    <span class="text-[10px] font-bold text-gray-700" id="stress-text">0/100</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div id="stress-bar" class="progress-bar bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scenario Area -->
+        <div class="flex-1 overflow-y-auto p-6 bg-gray-50 pb-20">
+            
+            <!-- Question Card -->
+            <div id="question-card" class="fade-in">
+                <div class="flex items-center justify-between mb-2">
+                    <span id="question-progress" class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full transition-colors duration-300"></span>
+                </div>
+                <h2 id="scenario-title" class="text-base font-bold text-gray-800 mb-1.5"></h2>
+                <p id="scenario-desc" class="text-sm text-gray-600 mb-5 leading-relaxed"></p>
+                <div id="options-container" class="space-y-3"></div>
+            </div>
+
+            <!-- Feedback Card -->
+            <div id="feedback-card" class="hidden fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <div class="mb-4 p-3.5 bg-gray-50 rounded-xl border-l-4 border-blue-500">
+                    <p id="feedback-quote-label" class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1.5"></p>
+                    <p id="feedback-quote" class="italic text-xs text-gray-700 font-medium"></p>
+                </div>
+                <div class="mb-5">
+                    <p id="feedback-lesson-label" class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-1.5"></p>
+                    <p id="feedback-lesson" class="text-xs text-gray-800 leading-relaxed"></p>
+                </div>
+                <div id="stat-changes" class="flex gap-3 mb-5"></div>
+                <button id="next-stage-btn" onclick="nextStage()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-5 rounded-xl text-sm transition-transform transform active:scale-95"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Stress Modal -->
+    <div id="stress-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-6 fade-in">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🤯</div>
+            <h3 id="stress-warning-title" class="text-xl font-bold text-gray-900 mb-2"></h3>
+            <p id="stress-warning-desc" class="text-sm text-gray-600 mb-6"></p>
+            <button id="stress-report-btn" onclick="generateReport()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-xl text-sm transition-transform active:scale-95"></button>
+        </div>
+    </div>
+
+    <!-- Bankrupt Modal -->
+    <div id="bankrupt-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-6 fade-in">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">💸</div>
+            <h3 id="bankrupt-warning-title" class="text-xl font-bold text-gray-900 mb-2"></h3>
+            <p id="bankrupt-warning-desc" class="text-sm text-gray-600 mb-6"></p>
+            <button id="bankrupt-report-btn" onclick="generateReport()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-xl text-sm transition-transform active:scale-95"></button>
+        </div>
+    </div>
+
+    <!-- Crisis Modal -->
+    <div id="crisis-modal" class="hidden fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-6 fade-in">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl text-center border-4 border-red-500">
+            <div class="w-20 h-20 bg-red-600 text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-4 animate-pulse">🚨</div>
+            <h3 id="crisis-title" class="text-2xl font-black text-red-600 mb-2 tracking-wide"></h3>
+            <p id="crisis-desc" class="text-sm text-gray-700 mb-6 font-medium"></p>
+            <button id="face-crisis-btn" onclick="faceCrisis()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition-transform active:scale-95"></button>
+        </div>
+    </div>
+
+    <!-- Report Screen -->
+    <div id="report-screen" class="hidden flex-1 flex-col bg-white overflow-y-auto fade-in">
+        <div id="report-content" class="p-6 bg-white">
+            <div class="text-center my-2 mb-6">
+                <div id="report-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-3xl"></div>
+                <h2 id="report-title" class="text-2xl font-bold mb-1 text-gray-900"></h2>
+                <p id="report-subtitle-label" class="text-[10px] text-gray-500 uppercase tracking-wider"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-100 text-center">
+                    <p id="report-budget-label" class="text-[10px] text-gray-400 font-semibold uppercase mb-1"></p>
+                    <p id="report-money" class="text-xl font-bold text-gray-900">$0</p>
+                </div>
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-100 text-center">
+                    <p id="report-stress-label" class="text-[10px] text-gray-400 font-semibold uppercase mb-1"></p>
+                    <p id="report-stress-val" class="text-xl font-bold text-gray-900">0/100</p>
+                </div>
+            </div>
+
+            <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 mb-5">
+                <p id="report-stress-analysis-title" class="text-xs font-bold text-blue-900 mb-1"></p>
+                <p id="report-stress-desc" class="text-xs text-blue-800 leading-relaxed"></p>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
+                <p id="report-advice-title" class="text-xs font-bold text-gray-900 mb-1"></p>
+                <p id="report-advice" class="text-xs text-gray-700 leading-relaxed"></p>
+            </div>
+
+            <div class="mb-2">
+                <p id="report-history-title" class="text-xs font-bold text-gray-800 mb-3 uppercase tracking-wider"></p>
+                <div id="report-history" class="space-y-2.5"></div>
+            </div>
+            
+            <p class="text-[10px] text-center text-gray-300 mt-6 pt-4 border-t border-gray-100">大學生存指南：90日財務保衛戰</p>
+        </div>
+
+        <div class="p-6 pt-0 bg-white hide-on-export flex-col space-y-3">
+            <button onclick="downloadScreenshot()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-6 rounded-xl text-sm shadow-md transition-transform transform active:scale-95 flex items-center justify-center gap-2">
+                <span id="download-btn-text"></span>
+            </button>
+            <button id="restart-btn" onclick="resetGame()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3.5 px-6 rounded-xl text-sm transition-transform transform active:scale-95"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'zh';
+
+    const t = {
+        zh: {
+            title: "大學生存指南：90日財務保衛戰",
+            subtitle: "大學生學期理財生存模擬器",
+            startBtn: "開始挑戰",
+            tutorialTitle: "💡 遊戲玩法與規則：",
+            tutorialRules: [
+                "🎯 <strong>你的目標：</strong> 你擁有 <strong>$6,000</strong> 的生活預算，必須度過為期 3 個月的大學生活，應付各種花費誘惑與突發狀況。",
+                "⚖️ <strong>三大抉擇：</strong> 每次遇到情境，你需要從「高消費」、「極度壓抑」或「聰明替代方案」中做出選擇。",
+                "🧠 <strong>壓力值 (0-100)：</strong> 代表你的身心健康。<strong>過度節省或死撐會讓壓力暴增！</strong> 如果壓力到達 100 或 預算清零，遊戲會被迫提早結束。",
+                "🏆 <strong>最終考驗：</strong> 試著在金錢與心理健康之間取得完美平衡，獲取專屬於你的理財性格報告！"
+            ],
+            budgetLeft: "預算剩下",
+            currentProgress: "當前進度",
+            stressLevel: "心理壓力值",
+            questionProgress: (curr, total) => `第 ${curr} / ${total} 題`,
+            innerThoughts: "💭 你的內心獨白",
+            financialNote: "💡 理財筆記",
+            budgetChange: "預算變動",
+            stressChange: "壓力變動",
+            nextBtn: "繼續下一階段",
+            finalNextBtn: "看看你能否在理財和心理之間找到平衡呢？ 📊",
+            stressWarningTitle: "警告：壓力爆錶！",
+            stressWarningDesc: "你的精神狀態已經到達極限 (100/100)。過度壓抑自己已經嚴重影響了生活品質與健康，無法繼續正常的大學生活。",
+            bankruptWarningTitle: "警告：預算耗盡！",
+            bankruptWarningDesc: "你的銀行餘額已經歸零甚至負數。過度消費讓你失去了基本生存能力，只能宣告財務破產。",
+            viewReportBtn: "提前結束並查看診斷報告",
+            crisisTitle: "🚨 突發危機警告 🚨",
+            crisisDesc: "學期末最後關頭，一場意想不到的災難即將降臨...",
+            faceCrisisBtn: "面對現實",
+            reportTitle: "遊戲通關與分析報告",
+            reportSubtitle: "以下是你在這 90 日學期中的財務行為數據分析",
+            finalBudget: "最終預算剩下",
+            finalStress: "最終心理壓力",
+            stressAnalysisTitle: "🧠 壓力狀態解析：",
+            adviceTitle: "📊 理財性格診斷與綜合建議：",
+            historyTitle: "📝 歷程決策回顧：",
+            downloadBtn: "📸 下載我的分析截圖 (IG Story Ready)",
+            restartBtn: "返回主目錄重新開始",
+            choiceLabel: "選擇：",
+            
+            reportStressTitle: "壓力徹底崩潰！",
+            reportStressDesc100: "你的壓力值已經突破極限！完全忽視身心健康，導致無法繼續正常學業與生活。",
+            reportAdviceStress: "【理財診斷：壓力爆錶的苦行僧】你做出了 {countB} 次極度壓抑的選擇。不要為了節省而節省，需要花費的時候就需要花費，不要死忍下去。投資在自己的身心健康上同樣重要。",
+            
+            reportBankruptTitle: "破產收場！",
+            reportStressDescHigh: "財政赤字加上高壓，雙重打擊下生活品質極差。",
+            reportStressDescBankrupt: "雖然你可能玩得很開心，但財政已經完全透支。",
+            reportAdviceBankrupt: "【理財診斷：享樂主義的破產者】你在遊戲中選擇了 {countA} 次高消費。這反映出日常消費缺乏規劃，且沒有建立「緊急儲備金」的概念。建議未來減少非必要開銷。",
+            
+            reportSuccessTitle: "順利過關！",
+            reportStressDescHighSurvive: "你雖然度過了危機，但壓力處於高危水平，需注意放鬆。",
+            reportStressDescGood: "你的壓力值控制得很健康，心態放鬆且生活有條理。",
+            
+            reportAdviceSmart: "【理財診斷：精明理財大師】恭喜你！你做出了 {countC} 次聰明選擇。保留了良好的預算與抗風險能力。懂得尋找平替與開源，你是出色的理財達人！",
+            reportAdviceOverSave: "【理財診斷：過度壓抑者】你做出了 {countB} 次極度節省的選擇。雖然保住了金錢，但犧牲了生活品質與心理健康。需要花費的時候就花費，學會適度放鬆。",
+            reportAdviceBalanced: "【理財診斷：穩健平衡者】你有基本的財務意識，雖然偶有掙扎，但總算安全過關。若能在日常中進一步減少非必要支出，財務狀況會更健康。"
+        },
+        en: {
+            title: "College Survival: 90-Day Challenge",
+            subtitle: "Financial Survival Simulator",
+            startBtn: "Start Challenge",
+            tutorialTitle: "💡 Game Rules:",
+            tutorialRules: [
+                "🎯 <strong>Goal:</strong> Survive 3 months of college with a <strong>$6,000</strong> budget, facing temptations and emergencies.",
+                "⚖️ <strong>Choices:</strong> For each scenario, choose between 'High Spending', 'Extreme Saving', or 'Smart Alternative'.",
+                "🧠 <strong>Stress (0-100):</strong> Represents mental health. <strong>Extreme saving spikes stress!</strong> Reaching 100 or a $0 budget ends the game early.",
+                "🏆 <strong>Endgame:</strong> Balance money and health to receive your personalized financial personality report!"
+            ],
+            budgetLeft: "Budget Left",
+            currentProgress: "Progress",
+            stressLevel: "Mental Stress",
+            questionProgress: (curr, total) => `Question ${curr} / ${total}`,
+            innerThoughts: "💭 Inner Thoughts",
+            financialNote: "💡 Financial Note",
+            budgetChange: "Budget Change",
+            stressChange: "Stress Change",
+            nextBtn: "Continue to Next Stage",
+            finalNextBtn: "Can you balance money and mind? 📊",
+            stressWarningTitle: "Warning: Stress Overload!",
+            stressWarningDesc: "Your mental state has reached its limit (100/100). Extreme suppression has ruined your life quality. You can no longer continue.",
+            bankruptWarningTitle: "Warning: Bankrupt!",
+            bankruptWarningDesc: "Your budget has hit zero or negative. Excessive spending left you without basic survival means, leading to financial bankruptcy.",
+            viewReportBtn: "End Early & View Report",
+            crisisTitle: "🚨 EMERGENCY CRISIS 🚨",
+            crisisDesc: "As the semester ends, an unexpected disaster is about to strike...",
+            faceCrisisBtn: "Face Reality",
+            reportTitle: "Game Analysis Report",
+            reportSubtitle: "Financial behavior data analysis over the 90-day semester",
+            finalBudget: "Final Budget",
+            finalStress: "Final Stress",
+            stressAnalysisTitle: "🧠 Stress Analysis:",
+            adviceTitle: "📊 Financial Personality & Advice:",
+            historyTitle: "📝 Decision History:",
+            downloadBtn: "📸 Download Analysis (IG Story Ready)",
+            restartBtn: "Back to Main Menu",
+            choiceLabel: "Choice: ",
+
+            reportStressTitle: "Complete Stress Breakdown!",
+            reportStressDesc100: "Your stress broke the limit! Ignoring mental health made it impossible to continue normal life.",
+            reportAdviceStress: "[Diagnosis: Over-stressed Monk] You made {countB} extreme saving choices. Don't save just to save. Spend when necessary and don't suppress yourself blindly. Mental health is an important investment.",
+            
+            reportBankruptTitle: "Bankrupt!",
+            reportStressDescHigh: "Financial deficit plus high stress. Life quality is terrible under this double blow.",
+            reportStressDescBankrupt: "You might have had fun, but your finances are completely drained.",
+            reportAdviceBankrupt: "[Diagnosis: Bankrupt Hedonist] You made {countA} high-spending choices. This reflects a lack of planning and emergency funds. Reduce unnecessary expenses in the future.",
+            
+            reportSuccessTitle: "Successfully Survived!",
+            reportStressDescHighSurvive: "You survived, but your stress is at a high-risk level. Remember to relax.",
+            reportStressDescGood: "Your stress level is healthy, and your life is well-organized.",
+            
+            reportAdviceSmart: "[Diagnosis: Financial Master] Congrats! You made {countC} smart choices. You maintained a good budget and risk tolerance. Finding alternatives makes you a pro!",
+            reportAdviceOverSave: "[Diagnosis: Over-saver] You made {countB} extreme saving choices. You kept the money but sacrificed life quality. Learn to spend when necessary and relax.",
+            reportAdviceBalanced: "[Diagnosis: Balanced Survivor] You have basic financial awareness. You survived safely. Reducing unnecessary expenses further will make you healthier financially."
+        }
+    };
+
+    const gameData = [
+        {
+            stageId: { zh: "M1 - 月頭", en: "M1 - Early" },
+            title: { zh: "開學裝備與筆記工具", en: "Back to School Gear" },
+            description: { zh: "開學第一週，你需要準備上課的筆記工具和軟體。", en: "First week of school, you need tools and software for notes." },
+            options: [
+                { type: "A", moneyChange: -3000, stressChange: -5, text: { zh: "買最新款 iPad (扣 $3000)", en: "Buy latest iPad (-$3000)" }, quote: { zh: "溫書溫得咁辛苦，梗係要好好慰勞自己！", en: "Studying is hard, I deserve a treat!" }, lesson: { zh: "【工具迷思】工具的價值在於使用率。不要為了「儀式感」而超額消費。", en: "[Tool Myth] Value lies in usage. Don't overspend just for a sense of ritual." } },
+                { type: "B", moneyChange: 0, stressChange: 15, text: { zh: "咩都唔買，齋聽再借同學筆記 (扣 $0，壓力 +15)", en: "Buy nothing, borrow notes later (-$0, Stress +15)" }, quote: { zh: "唔買！慳錢最實際！不過上堂抄唔切有啲焦慮...", en: "Save money! But I'm anxious about missing class content..." }, lesson: { zh: "【過度節流】完全不投資在學習工具上，反而會增加隱形的時間與心理成本。", en: "[Over-saving] Zero investment in tools increases invisible time and mental costs." } },
+                { type: "C", moneyChange: -100, stressChange: -10, text: { zh: "用舊電腦加免費 Notion 整理 (扣 $100，壓力 -10)", en: "Use old laptop & Notion (-$100, Stress -10)" }, quote: { zh: "工欲善其事，唔一定要破產。善用數位工具一樣可以有效率！", en: "Digital tools can be highly efficient without breaking the bank!" }, lesson: { zh: "【平替思維】尋找性價比最高的數位平替，發揮現有設備的最大價值。", en: "[Smart Alternative] Find cost-effective digital alternatives to maximize current devices." } }
+            ]
+        },
+        {
+            stageId: { zh: "M1 - 月中", en: "M1 - Mid" },
+            title: { zh: "迎新社交與破冰", en: "Ice-breaking Social" },
+            description: { zh: "同組的組員提議今晚一齊去食餐好，放鬆一下順便破冰。", en: "Groupmates suggest a nice dinner tonight to relax and break the ice." },
+            options: [
+                { type: "A", moneyChange: -300, stressChange: -15, text: { zh: "去食高檔韓燒 (扣 $300)", en: "High-end K-BBQ (-$300)" }, quote: { zh: "大家一齊去，我唔去好似好唔合群。", en: "Everyone is going, I'd look bad if I don't." }, lesson: { zh: "【社交通脹】為了維持合群而過度消費，會在學期初就透支預算。", en: "[Social Inflation] Overspending to fit in drains your budget early on." } },
+                { type: "B", moneyChange: -15, stressChange: 15, text: { zh: "推甩聚會，自己食杯麵 (扣 $15，壓力 +15)", en: "Decline and eat cup noodles (-$15, Stress +15)" }, quote: { zh: "三舊水太貴啦，不如自己毒自食算。", en: "$300 is too much, I'll just eat alone." }, lesson: { zh: "【社交孤立】過度壓抑社交需求容易導致報復性消費。", en: "[Social Isolation] Suppressing social needs can lead to retaliatory spending later." } },
+                { type: "C", moneyChange: -60, stressChange: -15, text: { zh: "提議一齊打波再食平價意粉 (扣 $60，壓力 -15)", en: "Suggest badminton & cheap pasta (-$60, Stress -15)" }, quote: { zh: "其實大家只係想搵藉口聚下，一齊流下汗打波再食平嘢，性價比極高！", en: "People just want to hang out. Sports and cheap food are great!" }, lesson: { zh: "【掌握定價權】聰明的理財者會主動提出「低成本、高互動」的社交方案。", en: "[Pricing Power] Smart planners suggest low-cost, high-interaction alternatives." } }
+            ]
+        },
+        {
+            stageId: { zh: "M1 - 月尾", en: "M1 - End" },
+            title: { zh: "日常通勤的考驗", en: "Commuting Test" },
+            description: { zh: "遲起身，搭港鐵一定會遲到 15 分鐘，今天是嚴格計出席率的早堂。", en: "Woke up late. You'll be 15 mins late by MTR to a strict attendance class." },
+            options: [
+                { type: "A", moneyChange: -120, stressChange: -5, text: { zh: "立刻 Call Uber 趕返學 (扣 $120)", en: "Call Uber to rush to school (-$120)" }, quote: { zh: "用錢買時間好合理，為咗學業呢筆錢唔慳得！", en: "Buying time is reasonable, can't save on academics!" }, lesson: { zh: "【隱形成本】缺乏時間管理的「隱形成本」，多數高昂開銷是為了彌補規劃不佳。", en: "[Hidden Costs] High expenses often stem from poor time management." } },
+                { type: "B", moneyChange: 0, stressChange: 20, text: { zh: "索性射波唔返，繼續瞓 (扣 $0，壓力 +20)", en: "Skip class and sleep (-$0, Stress +20)" }, quote: { zh: "遲到都要扣分，不如唔好返，不過個心硬係囉囉攣...", en: "I'll lose points anyway, might as well skip, though I feel guilty..." }, lesson: { zh: "【逃避心態】為了一個小錯誤而放棄全盤，反而會增加未來的心理與學業壓力。", en: "[Escapism] Giving up over a small mistake increases future stress." } },
+                { type: "C", moneyChange: -5, stressChange: 5, text: { zh: "搭港鐵接受遲到，並即時電郵教授道歉 (扣 $5，壓力 +5)", en: "Take MTR, email professor to apologize (-$5, Stress +5)" }, quote: { zh: "遲到就遲到，好過花幾百蚊搭的士，下次早啲訓囉。", en: "Better late than spending hundreds on a taxi. Sleep earlier next time." }, lesson: { zh: "【沈沒成本】學會接受不可挽回的小失誤，避免為了補救而產生懲罰性開銷。", en: "[Sunk Cost] Accept irreversible mistakes to avoid punitive spending." } }
+            ]
+        },
+        {
+            stageId: { zh: "M2 - 月頭", en: "M2 - Early" },
+            title: { zh: "壓力釋放與娛樂誘惑", en: "Stress & Entertainment" },
+            description: { zh: "Mid-term 溫書溫到情緒崩潰，這時 Steam 迎來大特價，手遊也出了限定 Skin。", en: "Stressed from Mid-terms, Steam has a huge sale and mobile games have limited skins." },
+            options: [
+                { type: "A", moneyChange: -400, stressChange: -25, text: { zh: "瘋狂課金買 Game 及 Skin (扣 $400，壓力 -25)", en: "Spree buy games & skins (-$400, Stress -25)" }, quote: { zh: "溫書咁辛苦，買隻 Game 獎勵下自己好合理啫！", en: "Studying is hard, rewarding myself is justified!" }, lesson: { zh: "【拿鐵因子】以獎勵為名的衝動消費，往往是日後財困的溫床。", en: "[Latte Factor] Impulse buying disguised as rewards leads to financial trouble." } },
+                { type: "B", moneyChange: 0, stressChange: 25, text: { zh: "咩都唔買，死頂溫書 (扣 $0，壓力 +25)", en: "Buy nothing, force yourself to study (-$0, Stress +25)" }, quote: { zh: "一蚊都唔洗！我要做個守財奴！", en: "Not spending a dime! I will be a miser!" }, lesson: { zh: "【過度壓抑】完全剝奪娛樂會讓精神崩潰，適當的放鬆是必要的投資。", en: "[Over-suppression] Zero entertainment breaks your mind. Relaxation is an investment." } },
+                { type: "C", moneyChange: 0, stressChange: -10, text: { zh: "將 Game 放 Wishlist，改玩免費舊 Game (扣 $0，壓力 -10)", en: "Wishlist it, play free backlog games (-$0, Stress -10)" }, quote: { zh: "特價唔代表一定要買，玩返屋企倉底貨一樣開心。", en: "Discount doesn't mean I must buy. Playing backlog games is fun too." }, lesson: { zh: "【延遲滿足】分清「想要」與「需要」，學會零成本的壓力釋放法。", en: "[Delayed Gratification] Distinguish 'want' from 'need'. Find zero-cost stress relief." } }
+            ]
+        },
+        {
+            stageId: { zh: "M2 - 月中", en: "M2 - Mid" },
+            title: { zh: "趕 Project 的深夜宵夜", en: "Late Night Project" },
+            description: { zh: "全組人通宵趕 Project，大家都肚子餓了。", en: "The whole group is pulling an all-nighter for a project, and everyone is starving." },
+            options: [
+                { type: "A", moneyChange: -120, stressChange: -10, text: { zh: "叫貴價外賣加台式飲品 (扣 $120)", en: "Order premium food delivery & boba (-$120)" }, quote: { zh: "深夜最適合食好西慰勞自己，快靚正送到門口！", en: "Late night deserves good food delivery to the door!" }, lesson: { zh: "【外賣陷阱】外賣平台的運費與服務費極高，長期累積下來會吃掉大筆預算。", en: "[Delivery Trap] Delivery fees add up and eat away your budget over time." } },
+                { type: "B", moneyChange: 0, stressChange: 15, text: { zh: "捱餓死頂，唔食宵夜 (扣 $0，壓力 +15)", en: "Starve and endure it (-$0, Stress +15)" }, quote: { zh: "慳得一蚊得一蚊，餓一晚唔會死嘅...", en: "Save every penny, starving one night won't kill me..." }, lesson: { zh: "【健康成本】為了省小錢而賠上健康與專注力，得不償失。", en: "[Health Cost] Sacrificing health and focus to save small money is not worth it." } },
+                { type: "C", moneyChange: -35, stressChange: -5, text: { zh: "落街超市買杯麵同烏冬 (扣 $35，壓力 -5)", en: "Buy cheap noodles at supermarket (-$35, Stress -5)" }, quote: { zh: "落街行個圈當透氣，順便買平民宵夜，又暖胃又慳錢。", en: "Take a walk for fresh air and get cheap noodles. Warm and budget-friendly." }, lesson: { zh: "【主動微調】在花費與口腹之慾中取得平衡，選擇性價比最高的生活方式。", en: "[Active Adjustment] Balance spending and appetite with high cost-performance choices." } }
+            ]
+        },
+        {
+            stageId: { zh: "M2 - 月尾", en: "M2 - End" },
+            title: { zh: "固定訂閱大審查", en: "Subscription Audit" },
+            description: { zh: "信用卡帳單來了，各種訂閱服務自動扣款扣了一大筆。", en: "Credit card bill arrives, auto-renew subscriptions took a large chunk." },
+            options: [
+                { type: "A", moneyChange: -180, stressChange: 0, text: { zh: "由得佢自動扣款，懶得理 (扣 $180)", en: "Let it auto-renew, too lazy to care (-$180)" }, quote: { zh: "自動續期最方便，費事煩啦。", en: "Auto-renew is convenient, don't want to bother." }, lesson: { zh: "【隱形漏水】自動續費的訂閱服務是財務隱形漏洞，許多服務根本長期閒置。", en: "[Invisible Leaks] Auto-renewals are financial leaks; many services are idle." } },
+                { type: "B", moneyChange: 0, stressChange: 15, text: { zh: "怒刪所有訂閱，咩都無晒 (扣 $0，壓力 +15)", en: "Cancel everything in anger (-$0, Stress +15)" }, quote: { zh: "全部取消！自己咩都唔用喇！", en: "Cancel all! I won't use anything anymore!" }, lesson: { zh: "【極端激進】過度切斷必要的數位工具，反而降低了學習與工作效率。", en: "[Extreme Measures] Cutting necessary digital tools lowers efficiency." } },
+                { type: "C", moneyChange: -50, stressChange: -5, text: { zh: "取消閒置服務，與朋友夾 Family Plan (扣 $50，壓力 -5)", en: "Cancel idle ones, share Family Plan (-$50, Stress -5)" }, quote: { zh: "精明理財由定期 Audit 開始，夾 Plan 可以慳返一大截！", en: "Smart finance starts with audits. Sharing plans saves a lot!" }, lesson: { zh: "【共享經濟】善用家庭方案與共享機制，維持生活品質的同時大幅降低固定開支。", en: "[Sharing Economy] Use family plans to maintain life quality while cutting fixed costs." } }
+            ]
+        },
+        {
+            stageId: { zh: "M3 - 月頭", en: "M3 - Early" },
+            title: { zh: "期末溫習與精讀筆記", en: "Finals & Study Notes" },
+            description: { zh: "準備迎接 Final Exam，網上有人賣天價精讀筆記。", en: "Preparing for Finals, someone is selling expensive study notes online." },
+            options: [
+                { type: "A", moneyChange: -200, stressChange: -10, text: { zh: "直接買師兄姐嘅天價精讀筆記 (扣 $200)", en: "Buy expensive notes from seniors (-$200)" }, quote: { zh: "用錢買人哋嘅心血最快手，保證 Pass！", en: "Buying others' hard work is the fastest way to pass!" }, lesson: { zh: "【資訊溢價】別盲目購買網上二手筆記，親自動手整理記憶才深刻。", en: "[Information Premium] Don't buy blindly. Organizing notes yourself deepens memory." } },
+                { type: "B", moneyChange: 0, stressChange: 25, text: { zh: "完全唔睇筆記，靠自己盲目死背 (扣 $0，壓力 +25)", en: "Blind rote memorization (-$0, Stress +25)" }, quote: { zh: "靠自己盲背算，一毫子都唔洗使！", en: "I'll just memorize blindly, won't spend a dime!" }, lesson: { zh: "【低效盲目】缺乏正確方法盲目努力，往往事倍功半，徒增焦慮。", en: "[Inefficient Blindness] Working hard without methods increases anxiety and yields less." } },
+                { type: "C", moneyChange: -40, stressChange: -10, text: { zh: "夾份買一份，再用 AI 工具整 Flashcards (扣 $40，壓力 -10)", en: "Split cost, use AI for flashcards (-$40, Stress -10)" }, quote: { zh: "夾錢分享資源，再配合 AI 幫手溫書，高效率又慳錢！", en: "Share resources and use AI. Efficient and cheap!" }, lesson: { zh: "【科技賦能】善用科技與群組協作，以極低成本達成最高溫習效率。", en: "[Tech Empowerment] Use tech and collaboration for highest efficiency at low cost." } }
+            ]
+        },
+        {
+            stageId: { zh: "M3 - 月中", en: "M3 - Mid" },
+            title: { zh: "兼職開源的抉擇", en: "Part-time Hustle" },
+            description: { zh: "學校有短期活動助理工作，薪酬不錯但會佔用週末溫書時間。", en: "Short-term assistant job available. Good pay but takes up weekend study time." },
+            options: [
+                { type: "A", moneyChange: 0, stressChange: 10, text: { zh: "唔做，hea 過去算，唔夠錢就碌卡 (扣 $0，壓力 +10)", en: "Skip it, use credit card if broke (-$0, Stress +10)" }, quote: { zh: "好攰呀，抖下算啦，錢唔夠遲吓先算。", en: "Too tired, I'll rest. If I lack money, I'll deal with it later." }, lesson: { zh: "【逃避心態】遇到財務壓力時選擇逃避或依賴信貸，容易陷入債務迴圈。", en: "[Escapism] Evading financial stress and relying on credit leads to debt cycles." } },
+                { type: "B", moneyChange: 0, stressChange: 20, text: { zh: "唔做，但喺屋企食白麵包死慳 (扣 $0，壓力 +20)", en: "Skip it, eat plain bread to save (-$0, Stress +20)" }, quote: { zh: "留喺屋企溫書唔洗出街，一蚊都唔洗使！", en: "Stay home and study, don't spend a single cent!" }, lesson: { zh: "【匱乏心態】過度焦慮導致生活品質急降，影響考試發揮。", en: "[Scarcity Mindset] Extreme anxiety drops life quality and affects exam performance." } },
+                { type: "C", moneyChange: 800, stressChange: -15, text: { zh: "接兩日 Part-time 賺外快 (賺取 $800，壓力 -15)", en: "Take 2-day part-time job (+$800, Stress -15)" }, quote: { zh: "開源好過一味盲目節流，辛苦兩日換嚟財政鬆動，抵！", en: "Earning is better than blind saving. Two days of hard work for financial ease!" }, lesson: { zh: "【主動開源】理財不單是省錢，適度利用勞力或技能開源，能徹底打破困局。", en: "[Active Earning] Finance isn't just saving. Using skills to earn breaks the deadlock." } }
+            ]
+        },
+        {
+            stageId: { zh: "M3 - 月尾", en: "M3 - End" },
+            title: { zh: "身心極限的提神法", en: "Physical Limits" },
+            description: { zh: "連續通宵幾晚溫書，精神極度疲憊，需要提神。", en: "Pulled all-nighters studying. Extremely exhausted, need a boost." },
+            options: [
+                { type: "A", moneyChange: -280, stressChange: -15, text: { zh: "連續一星期每日買 Starbucks (扣 $280)", en: "Daily Starbucks for a week (-$280)" }, quote: { zh: "每日一杯靚咖啡係我唯一的救贖！", en: "A nice coffee daily is my only salvation!" }, lesson: { zh: "【累積拿鐵因子】日常小確幸累積起來極為驚人，無形中侵蝕了儲蓄。", en: "[Latte Factor Accumulation] Daily small treats accumulate and erode savings invisibly." } },
+                { type: "B", moneyChange: 0, stressChange: 25, text: { zh: "死忍唔訓，靠飲水喉水頂硬上 (扣 $0，壓力 +25)", en: "Endure and drink tap water (-$0, Stress +25)" }, quote: { zh: "唔飲咖啡，靠意志力頂過去！", en: "No coffee, rely on pure willpower!" }, lesson: { zh: "【極端折磨】忽略生理需求往往適得其反，精神委靡導致溫書效率歸零。", en: "[Extreme Torture] Ignoring physiological needs backfires, dropping study efficiency to zero." } },
+                { type: "C", moneyChange: -20, stressChange: -15, text: { zh: "買即溶咖啡，抽半個鐘落街跑跑步 (扣 $20，壓力 -15)", en: "Instant coffee & quick jog (-$20, Stress -15)" }, quote: { zh: "飲平價咖啡，再加上運動流汗提神，健康又醒神！", en: "Cheap coffee plus exercise. Healthy and refreshing!" }, lesson: { zh: "【身心平衡】健康的提神方式（如運動與平價代用品）性價比最高。", en: "[Mind-Body Balance] Healthy boosters like exercise and cheap alternatives have the best ROI." } }
+            ]
+        },
+        {
+            stageId: { zh: "學期末 - 突發危機", en: "Finals - CRISIS" },
+            title: { zh: "💻 MacBook 突然死機！", en: "💻 MacBook Suddenly Dies!" },
+            description: { zh: "距離佔全科 40% 的 Final Project 繳交只剩最後一晚，你的 MacBook 突然黑屏死機！", en: "The night before a 40% Final Project is due, your MacBook goes black and dies!" },
+            options: [
+                { type: "A", moneyChange: -1500, stressChange: -10, text: { zh: "去 Apple Store 極速搶修保資料 (扣 $1500)", en: "Apple Store emergency repair (-$1500)" }, quote: { zh: "挽救心血最要緊，拿拿臨畀錢整起佢先！", en: "Saving my work is top priority, just pay to fix it fast!" }, lesson: { zh: "【應急儲備】突發意外是對平時理財的最佳考驗，這就是為何需要預留緊急備用金。", en: "[Emergency Fund] Accidents test your financial planning. This is why you need an emergency fund." } },
+                { type: "B", moneyChange: 0, stressChange: 50, text: { zh: "放棄維修，博一博用爛電話交功課 (扣 $0，壓力 +50)", en: "Give up, use broken phone to submit (-$0, Stress +50)" }, quote: { zh: "冇錢整呀！聽天由命算啦，交唔切就爛 Grade...", en: "No money to fix! Leave it to fate, if I fail I fail..." }, lesson: { zh: "【鴕鳥心態】缺乏應急準備時面對突發災難，只能任由學業與心態雙雙崩潰。", en: "[Ostrich Effect] Facing disasters without backup leads to academic and mental breakdown." } },
+                { type: "C", moneyChange: -800, stressChange: 5, text: { zh: "去先達平價維修，並問朋友借後備機 (扣 $800，壓力 +5)", en: "Cheap third-party repair & borrow a backup PC (-$800, Stress +5)" }, quote: { zh: "好彩平時有積蓄同好朋友幫手，冷靜應對危機！", en: "Good thing I have some savings and friends to help!" }, lesson: { zh: "【危機管理】完美的風險管理不僅靠金錢，還包括人際網絡與替代方案。", en: "[Crisis Management] Perfect risk management includes social networks and backup plans, not just money." } }
+            ]
+        }
+    ];
+
+    let currentStage = 0;
+    let money = 6000;
+    let stress = 0;
+    let choiceHistory = [];
+    let isStressExploded = false;
+    let isBankrupt = false;
+    let isCrisisShown = false;
+    let lastSelectedOptionIndex = -1;
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        updateStaticText();
+        
+        if (!document.getElementById('game-screen').classList.contains('hidden')) {
+            updateStats();
+            if (!document.getElementById('question-card').classList.contains('hidden')) {
+                loadQuestion(true);
+            } else {
+                renderFeedback();
+            }
+        } else if (!document.getElementById('report-screen').classList.contains('hidden')) {
+            generateReport();
+        }
+    }
+
+    function updateStaticText() {
+        document.getElementById('game-title').innerText = t[currentLang].title;
+        document.getElementById('game-subtitle').innerText = t[currentLang].subtitle;
+        document.getElementById('tutorial-title').innerText = t[currentLang].tutorialTitle;
+        document.getElementById('tutorial-rules').innerHTML = t[currentLang].tutorialRules.map(r => `<li>${r}</li>`).join('');
+        document.getElementById('start-btn').innerText = t[currentLang].startBtn;
+
+        document.getElementById('budget-label').innerText = t[currentLang].budgetLeft;
+        document.getElementById('progress-label').innerText = t[currentLang].currentProgress;
+        document.getElementById('stress-label').innerText = t[currentLang].stressLevel;
+
+        document.getElementById('feedback-quote-label').innerText = t[currentLang].innerThoughts;
+        document.getElementById('feedback-lesson-label').innerText = t[currentLang].financialNote;
+        
+        document.getElementById('stress-warning-title').innerText = t[currentLang].stressWarningTitle;
+        document.getElementById('stress-warning-desc').innerText = t[currentLang].stressWarningDesc;
+        document.getElementById('stress-report-btn').innerText = t[currentLang].viewReportBtn;
+
+        document.getElementById('bankrupt-warning-title').innerText = t[currentLang].bankruptWarningTitle;
+        document.getElementById('bankrupt-warning-desc').innerText = t[currentLang].bankruptWarningDesc;
+        document.getElementById('bankrupt-report-btn').innerText = t[currentLang].viewReportBtn;
+
+        document.getElementById('crisis-title').innerText = t[currentLang].crisisTitle;
+        document.getElementById('crisis-desc').innerText = t[currentLang].crisisDesc;
+        document.getElementById('face-crisis-btn').innerText = t[currentLang].faceCrisisBtn;
+
+        document.getElementById('report-title').innerText = t[currentLang].reportTitle;
+        document.getElementById('report-subtitle-label').innerText = t[currentLang].reportSubtitle;
+        document.getElementById('report-budget-label').innerText = t[currentLang].finalBudget;
+        document.getElementById('report-stress-label').innerText = t[currentLang].finalStress;
+        document.getElementById('report-stress-analysis-title').innerText = t[currentLang].stressAnalysisTitle;
+        document.getElementById('report-advice-title').innerText = t[currentLang].adviceTitle;
+        document.getElementById('report-history-title').innerText = t[currentLang].historyTitle;
+        
+        document.getElementById('download-btn-text').innerText = t[currentLang].downloadBtn;
+        document.getElementById('restart-btn').innerText = t[currentLang].restartBtn;
+
+        document.getElementById('lang-toggle-text').innerText = currentLang === 'zh' ? 'EN' : '中';
+    }
+
+    function startGame() {
+        currentStage = 0; money = 6000; stress = 0; choiceHistory = [];
+        isStressExploded = false; isBankrupt = false; isCrisisShown = false; lastSelectedOptionIndex = -1;
+        
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('report-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('game-screen').classList.add('flex');
+        
+        loadQuestion();
+    }
+
+    function updateStats() {
+        document.getElementById('money-display').innerText = money;
+        document.getElementById('stage-display').innerText = gameData[currentStage].stageId[currentLang];
+        
+        const budgetPercent = Math.max(0, Math.min(100, (money / 6000) * 100));
+        const budgetBar = document.getElementById('budget-bar');
+        budgetBar.style.width = budgetPercent + "%";
+        
+        if (money >= 3000) { budgetBar.className = "progress-bar bg-blue-500 h-1.5 rounded-full"; } 
+        else if (money >= 1000) { budgetBar.className = "progress-bar bg-yellow-400 h-1.5 rounded-full"; } 
+        else { budgetBar.className = "progress-bar bg-red-500 h-1.5 rounded-full"; }
+
+        stress = Math.max(0, Math.min(100, stress));
+        document.getElementById('stress-text').innerText = stress + "/100";
+        
+        const stressBar = document.getElementById('stress-bar');
+        stressBar.style.width = stress + "%";
+        
+        if (stress < 40) { stressBar.className = "progress-bar bg-green-500 h-2 rounded-full"; } 
+        else if (stress < 75) { stressBar.className = "progress-bar bg-yellow-500 h-2 rounded-full"; } 
+        else { stressBar.className = "progress-bar bg-red-600 h-2 rounded-full"; }
+    }
+
+    function loadQuestion(isReRender = false) {
+        if (!isReRender) updateStats();
+        
+        document.getElementById('feedback-card').classList.add('hidden');
+        document.getElementById('question-card').classList.remove('hidden');
+        
+        const currentQ = gameData[currentStage];
+        const qProgress = document.getElementById('question-progress');
+        qProgress.innerText = t[currentLang].questionProgress(currentStage + 1, gameData.length);
+        
+        document.getElementById('scenario-title').innerText = currentQ.title[currentLang];
+        document.getElementById('scenario-desc').innerText = currentQ.description[currentLang];
+        
+        const isFinalStage = currentStage === gameData.length - 1;
+        const stageDisplay = document.getElementById('stage-display');
+        
+        if (isFinalStage) {
+            stageDisplay.classList.remove('text-blue-600');
+            stageDisplay.classList.add('text-red-600');
+            qProgress.classList.remove('text-blue-600', 'bg-blue-50');
+            qProgress.classList.add('text-white', 'bg-red-600');
+        } else {
+            stageDisplay.classList.add('text-blue-600');
+            stageDisplay.classList.remove('text-red-600');
+            qProgress.classList.add('text-blue-600', 'bg-blue-50');
+            qProgress.classList.remove('text-white', 'bg-red-600');
+        }
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        currentQ.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = "w-full text-left p-4 bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl text-xs font-medium text-gray-700 transition-all shadow-sm active:scale-[0.98] flex items-center justify-between";
+            btn.innerHTML = `<span>${opt.text[currentLang]}</span> <span class="text-gray-400 text-sm">→</span>`;
+            btn.onclick = () => selectOption(index);
+            optionsContainer.appendChild(btn);
+        });
+
+        const nextBtn = document.getElementById('next-stage-btn');
+        nextBtn.innerText = isFinalStage ? t[currentLang].finalNextBtn : t[currentLang].nextBtn;
+    }
+
+    function selectOption(optionIndex) {
+        const currentQ = gameData[currentStage];
+        const selectedOpt = currentQ.options[optionIndex];
+        
+        money += selectedOpt.moneyChange;
+        stress += selectedOpt.stressChange;
+        
+        choiceHistory.push({ stageIdx: currentStage, optionIdx: optionIndex });
+        lastSelectedOptionIndex = optionIndex;
+        
+        updateStats();
+        renderFeedback();
+    }
+
+    function renderFeedback() {
+        document.getElementById('question-card').classList.add('hidden');
+        document.getElementById('feedback-card').classList.remove('hidden');
+        
+        const selectedOpt = gameData[currentStage].options[lastSelectedOptionIndex];
+        document.getElementById('feedback-quote').innerText = `"${selectedOpt.quote[currentLang]}"`;
+        document.getElementById('feedback-lesson').innerText = selectedOpt.lesson[currentLang];
+        
+        const moneyColor = selectedOpt.moneyChange >= 0 ? 'text-green-600' : 'text-red-600';
+        const moneySign = selectedOpt.moneyChange >= 0 ? '+' : '';
+        const stressColor = selectedOpt.stressChange <= 0 ? 'text-green-600' : 'text-orange-600';
+        const stressSign = selectedOpt.stressChange > 0 ? '+' : '';
+
+        document.getElementById('stat-changes').innerHTML = `
+            <div class="flex-1 bg-gray-50 p-2.5 rounded-lg text-center border border-gray-100">
+                <span class="text-[10px] text-gray-400 block uppercase font-semibold mb-0.5">${t[currentLang].budgetChange}</span>
+                <span class="text-xs font-bold ${moneyColor}">${moneySign}$${selectedOpt.moneyChange}</span>
+            </div>
+            <div class="flex-1 bg-gray-50 p-2.5 rounded-lg text-center border border-gray-100">
+                <span class="text-[10px] text-gray-400 block uppercase font-semibold mb-0.5">${t[currentLang].stressChange}</span>
+                <span class="text-xs font-bold ${stressColor}">${stressSign}${selectedOpt.stressChange}</span>
+            </div>
+        `;
+    }
+
+    function nextStage() {
+        if (money <= 0 && !isBankrupt) {
+            isBankrupt = true;
+            document.getElementById('bankrupt-modal').classList.remove('hidden');
+            return;
+        }
+
+        if (stress >= 100 && !isStressExploded) {
+            isStressExploded = true;
+            document.getElementById('stress-modal').classList.remove('hidden');
+            return;
+        }
+
+        if (currentStage === gameData.length - 2 && !isCrisisShown) {
+            isCrisisShown = true;
+            document.getElementById('crisis-modal').classList.remove('hidden');
+            return;
+        }
+
+        currentStage++;
+        if (currentStage < gameData.length) {
+            loadQuestion();
+        } else {
+            generateReport();
+        }
+    }
+
+    function faceCrisis() {
+        document.getElementById('crisis-modal').classList.add('hidden');
+        currentStage++;
+        loadQuestion();
+    }
+
+    function generateReport() {
+        document.getElementById('stress-modal').classList.add('hidden');
+        document.getElementById('bankrupt-modal').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('flex');
+        document.getElementById('game-screen').classList.add('hidden');
+        
+        document.getElementById('report-screen').classList.remove('hidden');
+        document.getElementById('report-screen').classList.add('flex');
+        
+        document.getElementById('report-money').innerText = `$${money}`;
+        document.getElementById('report-stress-val').innerText = `${stress}/100`;
+        
+        const iconEl = document.getElementById('report-icon');
+        const titleEl = document.getElementById('report-title');
+        
+        let countA = 0, countB = 0, countC = 0;
+        choiceHistory.forEach(item => {
+            const type = gameData[item.stageIdx].options[item.optionIdx].type;
+            if (type === 'A') countA++;
+            if (type === 'B') countB++;
+            if (type === 'C') countC++;
+        });
+
+        let adviceText = "", stressDescText = "";
+        
+        if (stress >= 100) {
+            iconEl.innerText = "🤯";
+            iconEl.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-3xl bg-red-100 text-red-600";
+            titleEl.innerText = t[currentLang].reportStressTitle;
+            titleEl.className = "text-2xl font-bold mb-1 text-red-600";
+            stressDescText = t[currentLang].reportStressDesc100;
+            adviceText = t[currentLang].reportAdviceStress.replace('{countB}', countB);
+        } else if (money <= 0) {
+            iconEl.innerText = "💸";
+            iconEl.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-3xl bg-red-100 text-red-600";
+            titleEl.innerText = t[currentLang].reportBankruptTitle;
+            titleEl.className = "text-2xl font-bold mb-1 text-red-600";
+            stressDescText = stress > 70 ? t[currentLang].reportStressDescHigh : t[currentLang].reportStressDescBankrupt;
+            adviceText = t[currentLang].reportAdviceBankrupt.replace('{countA}', countA);
+        } else {
+            iconEl.innerText = "🏆";
+            iconEl.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-3xl bg-green-100 text-green-600";
+            titleEl.innerText = t[currentLang].reportSuccessTitle;
+            titleEl.className = "text-2xl font-bold mb-1 text-green-600";
+            stressDescText = stress > 70 ? t[currentLang].reportStressDescHighSurvive : t[currentLang].reportStressDescGood;
+            
+            if (countC >= 5) {
+                adviceText = t[currentLang].reportAdviceSmart.replace('{countC}', countC);
+            } else if (countB >= 5) {
+                adviceText = t[currentLang].reportAdviceOverSave.replace('{countB}', countB);
+            } else {
+                adviceText = t[currentLang].reportAdviceBalanced;
+            }
+        }
+        
+        document.getElementById('report-stress-desc').innerText = stressDescText;
+        document.getElementById('report-advice').innerText = adviceText;
+        
+        const historyContainer = document.getElementById('report-history');
+        historyContainer.innerHTML = '';
+        choiceHistory.forEach((item, idx) => {
+            const stage = gameData[item.stageIdx];
+            const opt = stage.options[item.optionIdx];
+            const div = document.createElement('div');
+            div.className = "p-3 bg-gray-50 rounded-xl border border-gray-100 text-xs";
+            div.innerHTML = `
+                <div class="flex justify-between font-bold text-gray-800 mb-1">
+                    <span>Q${idx+1}. ${stage.title[currentLang]}</span>
+                    <span class="${opt.moneyChange >= 0 ? 'text-green-600' : 'text-red-600'}">${opt.moneyChange >= 0 ? '+' : ''}$${opt.moneyChange}</span>
+                </div>
+                <p class="text-gray-600 mb-1">${t[currentLang].choiceLabel}${opt.text[currentLang]}</p>
+                <p class="text-[10px] text-blue-600 italic">💡 ${opt.lesson[currentLang]}</p>
+            `;
+            historyContainer.appendChild(div);
+        });
+    }
+
+    function resetGame() {
+        document.getElementById('report-screen').classList.remove('flex');
+        document.getElementById('report-screen').classList.add('hidden');
+        document.getElementById('start-screen').classList.remove('hidden');
+        document.getElementById('start-screen').classList.add('flex');
+    }
+
+    function downloadScreenshot() {
+        const reportElement = document.getElementById('report-screen');
+        reportElement.classList.add('exporting');
+        
+        html2canvas(document.getElementById('report-content'), { 
+            scale: 2, 
+            backgroundColor: "#ffffff",
+            useCORS: true
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = currentLang === 'zh' ? '90日財務保衛戰-報告.png' : '90_Days_Finance_Report.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            reportElement.classList.remove('exporting');
+        }).catch(err => {
+            alert(currentLang === 'zh' ? "截圖生成失敗，請稍後再試。" : "Screenshot failed, please try again.");
+            reportElement.classList.remove('exporting');
+        });
+    }
+
+    // Initialize text on load
+    window.onload = () => {
+        updateStaticText();
+    };
+</script>
+
+</body>
+</html>
