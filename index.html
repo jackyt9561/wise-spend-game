@@ -22,7 +22,7 @@
 <div class="app-container">
 
     <!-- Language Toggle Button -->
-    <div class="absolute top-4 right-4 z-50">
+    <div id="lang-container" class="absolute top-4 right-4 z-50">
         <button onclick="toggleLanguage()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-1.5 px-3.5 rounded-full shadow-sm text-xs border border-gray-300 transition-colors">
             <span id="lang-toggle-text">EN</span>
         </button>
@@ -479,6 +479,7 @@
         currentStage = 0; money = 6000; stress = 0; choiceHistory = [];
         isStressExploded = false; isBankrupt = false; isCrisisShown = false; lastSelectedOptionIndex = -1;
         
+        document.getElementById('lang-container').classList.add('hidden');
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('report-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
@@ -705,6 +706,7 @@
     function resetGame() {
         document.getElementById('report-screen').classList.remove('flex');
         document.getElementById('report-screen').classList.add('hidden');
+        document.getElementById('lang-container').classList.remove('hidden');
         document.getElementById('start-screen').classList.remove('hidden');
         document.getElementById('start-screen').classList.add('flex');
     }
