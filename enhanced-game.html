@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wise Spend Game - Enhanced Semester Edition</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #1d4ed8;
+      --primary-2: #1e40af;
+      --good: #166534;
+      --warn: #9a3412;
+      --bad: #991b1b;
+      --border: #cbd5e1;
+      --surface: #f8fafc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans HK", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 100%);
+      line-height: 1.5;
+    }
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    }
+    h1, h2, h3 { margin: 0 0 0.6rem 0; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .lang-btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      border-radius: 8px;
+      padding: 0.55rem 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .lang-btn:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid #f59e0b;
+      outline-offset: 2px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
+    }
+    .kpi .label { color: var(--muted); font-size: 0.85rem; }
+    .kpi .value { font-size: 1.1rem; font-weight: 800; }
+    .status-good { color: var(--good); }
+    .status-warn { color: var(--warn); }
+    .status-bad { color: var(--bad); }
+    .month-track {
+      width: 100%;
+      height: 10px;
+      background: #dbeafe;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .month-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #1d4ed8, #2563eb);
+      transition: width 0.3s ease;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.35rem;
+    }
+    .small {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .allocation-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.6rem;
+      align-items: center;
+      margin-bottom: 0.65rem;
+    }
+    input[type="number"] {
+      width: 140px;
+      padding: 0.45rem;
+      border: 1px solid #94a3b8;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    button.primary,
+    button.choice,
+    button.secondary {
+      border: 0;
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.97rem;
+      cursor: pointer;
+    }
+    button.primary { background: var(--primary); color: #fff; font-weight: 700; }
+    button.primary:hover { background: var(--primary-2); }
+    button.secondary { background: #e2e8f0; color: #0f172a; font-weight: 700; }
+    button.choice {
+      width: 100%;
+      text-align: left;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 0.45rem;
+    }
+    button.choice:hover { background: #e2e8f0; }
+    .feedback {
+      border-left: 4px solid #1d4ed8;
+      background: #eff6ff;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-top: 0.6rem;
+      white-space: pre-line;
+    }
+    .hidden { display: none !important; }
+    ul.history {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+    ul.history li { margin-bottom: 0.35rem; }
+    .warn-box {
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: #7c2d12;
+      border-radius: 10px;
+      padding: 0.65rem;
+      margin-top: 0.6rem;
+    }
+    @media (min-width: 760px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+      .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card">
+      <div class="topbar">
+        <div>
+          <h1 id="title"></h1>
+          <p id="subtitle" class="meta"></p>
+        </div>
+        <button id="langToggle" class="lang-btn" type="button"></button>
+      </div>
+    </section>
+
+    <section id="introCard" class="card">
+      <h2 id="introTitle" class="section-title"></h2>
+      <p id="introBody" class="small"></p>
+      <ul id="introBullets"></ul>
+    </section>
+
+    <section id="allocationCard" class="card">
+      <h2 id="allocationTitle" class="section-title"></h2>
+      <p id="allocationDesc" class="small"></p>
+      <div class="allocation-row">
+        <label for="essentialsInput" id="labelEssentials"></label>
+        <input id="essentialsInput" type="number" min="0" step="100" />
+      </div>
+      <div class="allocation-row">
+        <label for="cashInput" id="labelCash"></label>
+        <input id="cashInput" type="number" min="0" step="100" />
+      </div>
+      <div class="allocation-row">
+        <label for="emergencyInput" id="labelEmergency"></label>
+        <input id="emergencyInput" type="number" min="0" step="100" />
+      </div>
+      <p id="allocationTotal" class="small"></p>
+      <div id="allocationWarn" class="warn-box hidden" role="status" aria-live="polite"></div>
+      <div class="actions">
+        <button id="startBtn" class="primary" type="button"></button>
+      </div>
+    </section>
+
+    <section id="dashboardCard" class="card hidden" aria-live="polite">
+      <h2 id="dashboardTitle" class="section-title"></h2>
+      <div class="month-track" aria-label="Month progress">
+        <div id="monthFill" class="month-fill"></div>
+      </div>
+      <p id="monthText" class="small"></p>
+      <div class="grid">
+        <article class="kpi"><div id="kCashL" class="label"></div><div id="kCashV" class="value"></div></article>
+        <article class="kpi"><div id="kEmergencyL" class="label"></div><div id="kEmergencyV" class="value"></div></article>
+        <article class="kpi"><div id="kDebtL" class="label"></div><div id="kDebtV" class="value"></div></article>
+        <article class="kpi"><div id="kStressL" class="label"></div><div id="kStressV" class="value"></div></article>
+        <article class="kpi"><div id="kWellbeingL" class="label"></div><div id="kWellbeingV" class="value"></div></article>
+        <article class="kpi"><div id="kAcademicL" class="label"></div><div id="kAcademicV" class="value"></div></article>
+      </div>
+      <div id="riskBox" class="warn-box hidden"></div>
+    </section>
+
+    <section id="scenarioCard" class="card hidden">
+      <h2 id="scenarioTitle" class="section-title"></h2>
+      <p id="scenarioBody" class="small"></p>
+      <div id="choiceContainer"></div>
+      <div id="feedback" class="feedback hidden" role="status" aria-live="polite"></div>
+      <div class="actions">
+        <button id="nextBtn" class="primary hidden" type="button"></button>
+      </div>
+    </section>
+
+    <section id="reportCard" class="card hidden">
+      <h2 id="reportTitle" class="section-title"></h2>
+      <p id="reportSummary" class="small"></p>
+      <div class="grid-2">
+        <article class="kpi"><div id="scoreFinancialL" class="label"></div><div id="scoreFinancialV" class="value"></div></article>
+        <article class="kpi"><div id="scoreWellbeingL" class="label"></div><div id="scoreWellbeingV" class="value"></div></article>
+        <article class="kpi"><div id="scoreDebtL" class="label"></div><div id="scoreDebtV" class="value"></div></article>
+        <article class="kpi"><div id="scoreResilienceL" class="label"></div><div id="scoreResilienceV" class="value"></div></article>
+      </div>
+      <h3 id="historyTitle" class="section-title" style="margin-top:1rem;"></h3>
+      <ul id="historyList" class="history"></ul>
+      <h3 id="lessonsTitle" class="section-title" style="margin-top:1rem;"></h3>
+      <ul id="lessonsList" class="history"></ul>
+      <h3 id="reflectionTitle" class="section-title" style="margin-top:1rem;"></h3>
+      <ol id="reflectionList"></ol>
+      <div class="actions" style="margin-top:0.8rem;">
+        <button id="replayBtn" class="secondary" type="button"></button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const START_BUDGET = 9000;
+      const MONTHLY_ESSENTIAL_COST = 1600;
+      const TOTAL_MONTHS = 3;
+      const MONTHLY_DEBT_INTEREST = 0.05;
+
+      const fmtNumber = new Intl.NumberFormat("en-HK");
+      function formatHKD(value) {
+        const abs = fmtNumber.format(Math.abs(value));
+        return value < 0 ? `-HK$${abs}` : `HK$${abs}`;
+      }
+
+      const i18n = {
+        en: {
+          title: "Wise Spend: Semester Budget Challenge",
+          subtitle: "Currency context: HKD (Hong Kong Dollar)",
+          langBtn: "繁中",
+          introTitle: "You are managing a 3-month semester budget",
+          introBody: "You receive one semester budget and must balance recurring essentials, flexible spending cash, and emergency savings. Every month begins with recurring essential costs.",
+          bullets: [
+            "Recurring essentials: rent-share, transport, phone, basic study needs.",
+            "Flexible spending cash: social life, food choices, tools, and convenience.",
+            "Emergency savings: protected fund for sudden events such as laptop failure."
+          ],
+          allocationTitle: "Step 1: Allocate your HKD semester budget",
+          allocationDesc: "Set how to split HK$9,000 among essentials, flexible cash, and emergency fund. Total must equal HK$9,000.",
+          essentialsLabel: "Essentials allocation (for recurring monthly costs)",
+          cashLabel: "Flexible spending cash",
+          emergencyLabel: "Emergency savings",
+          allocationText: "Allocated: {allocated} / HK$9,000 · Remaining: {remaining}",
+          allocWarnOver: "You cannot allocate more than HK$9,000.",
+          allocWarnMismatch: "Please allocate the full HK$9,000 before starting.",
+          allocWarnLowEssentials: "Essentials are below expected recurring costs. You can continue, but deficits may create stress and debt.",
+          startBtn: "Start Semester",
+          dashboardTitle: "Budget Dashboard",
+          monthText: "Month {current} of 3 · Scenario {scenario}",
+          kCash: "Flexible cash",
+          kEmergency: "Emergency savings",
+          kDebt: "Debt balance",
+          kStress: "Stress (0-100)",
+          kWellbeing: "Wellbeing (0-100)",
+          kAcademic: "Academic readiness (0-100)",
+          statusStable: "Stable",
+          statusWatch: "Watch",
+          statusRisk: "At risk",
+          nextBtn: "Continue",
+          riskDebt: "Debt is growing. Next month interest will increase repayment pressure.",
+          riskLowCash: "Low liquid cash. New emergencies may force borrowing.",
+          riskLowWellbeing: "Wellbeing is low. Extreme frugality or burnout can hurt long-term outcomes.",
+          reportTitle: "Semester Final Report",
+          reportSummary: "You completed the semester. Review your financial and wellbeing trade-offs.",
+          scoreFinancialL: "Financial security",
+          scoreWellbeingL: "Wellbeing",
+          scoreDebtL: "Debt responsibility",
+          scoreResilienceL: "Resilience / Flexibility",
+          historyTitle: "Decision history",
+          lessonsTitle: "Key lessons",
+          reflectionTitle: "Classroom reflection questions",
+          replayBtn: "Replay / Reset",
+          reflections: [
+            "Which decision felt hardest, and what trade-off did you make?",
+            "When did you prioritize wellbeing over short-term savings, or the opposite?",
+            "How would you change your emergency-fund and debt strategy next time?"
+          ],
+          defaultFeedback: "Decision recorded.",
+          recurringDeducted: "Month {month} recurring essentials deducted: {amount}.",
+          recurringShortfall: "Essentials were short. You covered the gap using flexible cash and/or debt.",
+          debtInterest: "Debt interest charged this month: {amount}.",
+          debtPayment: "Minimum debt repayment made from cash: {amount}.",
+          debtShortPayment: "Could not fully repay minimum debt amount. This raises stress and repayment risk.",
+          emergencyUse: "Emergency event handling: emergency savings used {emergencyUsed}, cash used {cashUsed}, new debt {debtAdded}.",
+          emergencyNoBorrow: "You declined borrowing and left part of the emergency unresolved, which hurt resilience.",
+          categorySocial: "Social activity",
+          categoryStudy: "Study materials",
+          categorySub: "Subscriptions",
+          categoryHealth: "Food & health",
+          categoryIncome: "Part-time income",
+          categoryLaptop: "Laptop emergency"
+        },
+        zh: {
+          title: "精明開支：學期預算挑戰",
+          subtitle: "貨幣情境：港幣 HKD（Hong Kong Dollar）",
+          langBtn: "EN",
+          introTitle: "你要管理 3 個月學期預算",
+          introBody: "你有一筆學期資金，要平衡每月必要開支、彈性現金，以及緊急儲備。每月開始都會先扣固定必要成本。",
+          bullets: [
+            "每月必要開支：交通、電話、基本學習需要等。",
+            "彈性現金：社交、日常飲食、工具與方便性開支。",
+            "緊急儲備：應付突發事件（如手提電腦故障）的保護金。"
+          ],
+          allocationTitle: "步驟 1：分配你的學期資金",
+          allocationDesc: "請把 HK$9,000 分配到必要開支、彈性現金、緊急儲備。總額必須等於 HK$9,000。",
+          essentialsLabel: "必要開支預算（用於每月固定扣款）",
+          cashLabel: "彈性消費現金",
+          emergencyLabel: "緊急儲備",
+          allocationText: "已分配：{allocated} / HK$9,000 · 尚餘：{remaining}",
+          allocWarnOver: "分配總額不能超過 HK$9,000。",
+          allocWarnMismatch: "開始前請先把 HK$9,000 全數分配。",
+          allocWarnLowEssentials: "必要開支分配偏低。你可以繼續，但赤字可能令壓力與債務上升。",
+          startBtn: "開始學期",
+          dashboardTitle: "預算儀表板",
+          monthText: "第 {current} 個月（共 3 個月）· 情境 {scenario}",
+          kCash: "彈性現金",
+          kEmergency: "緊急儲備",
+          kDebt: "債務餘額",
+          kStress: "壓力（0-100）",
+          kWellbeing: "身心狀態（0-100）",
+          kAcademic: "學習狀態（0-100）",
+          statusStable: "穩定",
+          statusWatch: "留意",
+          statusRisk: "高風險",
+          nextBtn: "繼續",
+          riskDebt: "債務正在增加，下個月利息會提高還款壓力。",
+          riskLowCash: "流動現金偏低，若再有突發事件可能需要借貸。",
+          riskLowWellbeing: "身心狀態偏低，過度節流或過勞會影響長遠表現。",
+          reportTitle: "學期總結報告",
+          reportSummary: "你完成了本學期，請檢視財務與身心之間的取捨。",
+          scoreFinancialL: "財務安全",
+          scoreWellbeingL: "身心平衡",
+          scoreDebtL: "債務責任",
+          scoreResilienceL: "應變彈性",
+          historyTitle: "決策紀錄",
+          lessonsTitle: "重點學習",
+          reflectionTitle: "課堂反思問題",
+          replayBtn: "重新開始",
+          reflections: [
+            "哪一個決定最困難？你當時如何取捨？",
+            "你在哪些時候優先照顧身心，而不是只看短期省錢？",
+            "如果再玩一次，你會如何調整緊急儲備與債務策略？"
+          ],
+          defaultFeedback: "已記錄你的決定。",
+          recurringDeducted: "第 {month} 個月已扣除每月必要開支：{amount}。",
+          recurringShortfall: "必要開支不足，已以彈性現金及／或債務補足差額。",
+          debtInterest: "本月債務利息：{amount}。",
+          debtPayment: "已由現金支付最低還款：{amount}。",
+          debtShortPayment: "未能全數支付最低還款，壓力與還款風險上升。",
+          emergencyUse: "突發事件處理：使用緊急儲備 {emergencyUsed}、使用現金 {cashUsed}、新增債務 {debtAdded}。",
+          emergencyNoBorrow: "你選擇不借貸，部分危機未解決，應變力受影響。",
+          categorySocial: "社交活動",
+          categoryStudy: "學習材料",
+          categorySub: "訂閱管理",
+          categoryHealth: "飲食與健康",
+          categoryIncome: "兼職收入",
+          categoryLaptop: "電腦危機"
+        }
+      };
+
+      const scenarios = [
+        {
+          month: 1,
+          key: "social",
+          categoryKey: "categorySocial",
+          title: { en: "Welcome-week social plan", zh: "迎新週社交安排" },
+          prompt: {
+            en: "Your classmates invite you to a weekend outing. You want to connect, but your budget is limited.",
+            zh: "同學邀請你週末聚會。你想建立人際關係，但預算有限。"
+          },
+          choices: [
+            {
+              label: {
+                en: "Join premium dinner and nightlife (high social comfort)",
+                zh: "參加高消費晚餐加夜生活（社交壓力較低）"
+              },
+              effects: { cash: -520, stress: -8, wellbeing: 4, academic: -2 },
+              lesson: {
+                en: "Strong social bonding can help wellbeing, but high recurring social costs quickly reduce future flexibility.",
+                zh: "高社交消費可換來短期舒適，但會明顯減少之後的預算彈性。"
+              }
+            },
+            {
+              label: {
+                en: "Decline everything and stay alone to save money",
+                zh: "完全拒絕社交、留在宿舍省錢"
+              },
+              effects: { cash: 0, stress: 9, wellbeing: -8, academic: 1 },
+              lesson: {
+                en: "Saving money matters, but social isolation can increase stress and reduce motivation.",
+                zh: "省錢重要，但過度孤立容易增加壓力，亦會降低動力。"
+              }
+            },
+            {
+              label: {
+                en: "Propose low-cost group sports + simple meal",
+                zh: "改提議低成本運動加簡單晚餐"
+              },
+              effects: { cash: -120, stress: -5, wellbeing: 6, academic: 1 },
+              lesson: {
+                en: "Healthy frugality means preserving connection and wellbeing at a manageable cost.",
+                zh: "健康節流是用可負擔成本保留社交與身心平衡。"
+              }
+            }
+          ]
+        },
+        {
+          month: 1,
+          key: "study-materials",
+          categoryKey: "categoryStudy",
+          title: { en: "Course materials and note system", zh: "課程材料與筆記系統" },
+          prompt: {
+            en: "Two major classes recommend paid question banks and software tools.",
+            zh: "兩科主修建議購買題庫與學習工具。"
+          },
+          choices: [
+            {
+              label: { en: "Buy every recommended premium package", zh: "一次購買所有高價完整套件" },
+              effects: { cash: -700, stress: -6, wellbeing: 1, academic: 7 },
+              lesson: {
+                en: "Convenience can improve performance, but paying for everything may weaken emergency readiness.",
+                zh: "高便利度有助學習，但全買高價方案會削弱應急能力。"
+              }
+            },
+            {
+              label: { en: "Refuse all paid tools and rely only on memory", zh: "完全不買工具，只靠記憶硬撐" },
+              effects: { cash: 0, stress: 11, wellbeing: -4, academic: -8 },
+              lesson: {
+                en: "Avoiding all spending can cause hidden costs: weaker study quality and rising stress.",
+                zh: "一味不花錢有隱性代價：學習品質下降、壓力上升。"
+              }
+            },
+            {
+              label: { en: "Share second-hand materials and use free campus tools", zh: "二手教材共用＋善用校內免費工具" },
+              effects: { cash: -180, stress: -3, wellbeing: 2, academic: 5 },
+              lesson: {
+                en: "Cost-sharing and free resources can maintain outcomes without overspending.",
+                zh: "分攤成本與免費資源可兼顧效果與預算。"
+              }
+            }
+          ]
+        },
+        {
+          month: 2,
+          key: "subscriptions",
+          categoryKey: "categorySub",
+          title: { en: "Subscription renewal month", zh: "訂閱續費月份" },
+          prompt: {
+            en: "Multiple subscriptions renew this week. You can keep convenience or cut back.",
+            zh: "本週多個訂閱自動續費，你要決定是否保留便利性。"
+          },
+          choices: [
+            {
+              label: { en: "Keep all subscriptions and pay by credit card", zh: "保留全部訂閱，先刷信用卡付款" },
+              effects: { cash: -80, debt: 300, stress: -2, wellbeing: 2, academic: 1 },
+              lesson: {
+                en: "Credit can smooth cash flow, but interest means future-you pays more.",
+                zh: "信用卡可暫時紓緩現金流，但利息會把成本推到未來。"
+              }
+            },
+            {
+              label: { en: "Cancel everything immediately", zh: "即時全部取消" },
+              effects: { cash: 0, stress: 5, wellbeing: -4, academic: -5 },
+              lesson: {
+                en: "All-or-nothing cuts may hurt study and life systems. Prioritize, do not panic.",
+                zh: "一刀切未必理性，可能破壞學習與生活節奏。應該先分優先次序。"
+              }
+            },
+            {
+              label: { en: "Audit and keep only high-value services", zh: "審視使用率，只保留高價值服務" },
+              effects: { cash: -55, stress: -3, wellbeing: 2, academic: 3 },
+              lesson: {
+                en: "Subscription audits reduce leakage while preserving core support tools.",
+                zh: "定期檢視訂閱可減少漏水式開支，同時保留核心工具。"
+              }
+            }
+          ]
+        },
+        {
+          month: 2,
+          key: "food-health",
+          categoryKey: "categoryHealth",
+          title: { en: "Exam week food and health choices", zh: "考試週飲食與健康選擇" },
+          prompt: {
+            en: "Heavy workload this week. Your food and rest choices affect energy and concentration.",
+            zh: "這週功課很重，你的飲食和休息選擇會影響專注與精神。"
+          },
+          choices: [
+            {
+              label: { en: "Order expensive delivery daily for convenience", zh: "每天叫貴價外賣換取方便" },
+              effects: { cash: -420, stress: -4, wellbeing: -2, academic: 2 },
+              lesson: {
+                en: "Convenience helps short-term time pressure, but repeated premium choices drain budget quickly.",
+                zh: "短期方便能減壓，但連續高價選擇會快速侵蝕預算。"
+              }
+            },
+            {
+              label: { en: "Skip meals and sleep to save money and time", zh: "為省錢省時而少食少睡" },
+              effects: { cash: 60, stress: 16, wellbeing: -16, academic: -10 },
+              lesson: {
+                en: "This is unhealthy and not rewarded: poor nutrition and sleep damage learning and wellbeing.",
+                zh: "這不是健康節流：營養與睡眠不足會傷害學習與身心。"
+              }
+            },
+            {
+              label: { en: "Meal prep + affordable canteen + sleep routine", zh: "簡單備餐＋飯堂平衡選擇＋固定睡眠" },
+              effects: { cash: -160, stress: -7, wellbeing: 10, academic: 6 },
+              lesson: {
+                en: "Healthy frugality supports both performance and sustainable spending.",
+                zh: "健康節流可以同時提升表現與持續理財能力。"
+              }
+            }
+          ]
+        },
+        {
+          month: 3,
+          key: "part-time",
+          categoryKey: "categoryIncome",
+          title: { en: "Part-time opportunity", zh: "兼職機會" },
+          prompt: {
+            en: "A short campus job offers pay before finals, but takes time and energy.",
+            zh: "校內短期兼職可在期末前增加收入，但會佔用時間與精力。"
+          },
+          choices: [
+            {
+              label: { en: "Take extra shifts beyond your capacity", zh: "接超出負荷的班數" },
+              effects: { cash: 950, stress: 14, wellbeing: -10, academic: -8 },
+              lesson: {
+                en: "Higher income helps cash flow, but overwork can hurt grades and health.",
+                zh: "增加收入可紓緩現金流，但過勞會損害成績與健康。"
+              }
+            },
+            {
+              label: { en: "Avoid all work and hope budget survives", zh: "完全不工作，只希望預算捱得過" },
+              effects: { cash: 0, stress: 4, wellbeing: -2, academic: -1 },
+              lesson: {
+                en: "No new income can increase pressure when uncertain costs appear.",
+                zh: "在不確定環境下完全不開源，容易增加後續壓力。"
+              }
+            },
+            {
+              label: { en: "Take limited shifts with study boundaries", zh: "適量兼職並設定溫習時段" },
+              effects: { cash: 500, stress: -3, wellbeing: 2, academic: 3 },
+              lesson: {
+                en: "Balanced income strategy improves flexibility while preserving core goals.",
+                zh: "平衡開源策略可提升彈性，同時守住核心目標。"
+              }
+            }
+          ]
+        },
+        {
+          month: 3,
+          key: "laptop-emergency",
+          categoryKey: "categoryLaptop",
+          title: { en: "Laptop crisis before final submission", zh: "期末提交前電腦危機" },
+          prompt: {
+            en: "Your laptop fails one day before a major deadline. You must respond quickly.",
+            zh: "重大功課截止前一天，手提電腦突然故障，你必須立刻應對。"
+          },
+          emergency: true,
+          choices: [
+            {
+              label: { en: "Repair immediately with borrowing allowed", zh: "即時維修，必要時接受借貸" },
+              emergencyCost: 1800,
+              allowBorrow: true,
+              effects: { stress: -8, wellbeing: 1, academic: 8, resilience: 8 },
+              lesson: {
+                en: "Prepared emergency savings lower disruption. Borrowing is costly but may protect critical deadlines.",
+                zh: "有緊急儲備可減低衝擊。必要借貸雖有成本，但可保住關鍵學業時點。"
+              }
+            },
+            {
+              label: { en: "Delay repair and submit from phone", zh: "延遲維修，只用手機勉強提交" },
+              emergencyCost: 300,
+              allowBorrow: false,
+              effects: { stress: 14, wellbeing: -6, academic: -12, resilience: -8 },
+              lesson: {
+                en: "Avoiding immediate cost can create larger academic and emotional losses.",
+                zh: "短期避開支出，可能換來更大學業與情緒損失。"
+              }
+            },
+            {
+              label: { en: "Use library loan laptop and affordable repair", zh: "借用圖書館電腦並做平價維修" },
+              emergencyCost: 900,
+              allowBorrow: false,
+              effects: { stress: -2, wellbeing: 2, academic: 6, resilience: 10 },
+              lesson: {
+                en: "Combining campus resources with moderate spending improves resilience.",
+                zh: "善用校內資源配合適度支出，可提升應變能力。"
+              }
+            }
+          ]
+        }
+      ];
+
+      const state = {
+        lang: "en",
+        started: false,
+        scenarioIndex: 0,
+        currentMonth: 1,
+        essentialsPool: 0,
+        cash: 0,
+        emergency: 0,
+        debt: 0,
+        stress: 25,
+        wellbeing: 70,
+        academic: 70,
+        resilience: 50,
+        history: [],
+        lessonsSeen: new Set(),
+        scenarioAnswered: false
+      };
+
+      const el = {
+        title: document.getElementById("title"),
+        subtitle: document.getElementById("subtitle"),
+        langToggle: document.getElementById("langToggle"),
+        introTitle: document.getElementById("introTitle"),
+        introBody: document.getElementById("introBody"),
+        introBullets: document.getElementById("introBullets"),
+        allocationTitle: document.getElementById("allocationTitle"),
+        allocationDesc: document.getElementById("allocationDesc"),
+        labelEssentials: document.getElementById("labelEssentials"),
+        labelCash: document.getElementById("labelCash"),
+        labelEmergency: document.getElementById("labelEmergency"),
+        essentialsInput: document.getElementById("essentialsInput"),
+        cashInput: document.getElementById("cashInput"),
+        emergencyInput: document.getElementById("emergencyInput"),
+        allocationTotal: document.getElementById("allocationTotal"),
+        allocationWarn: document.getElementById("allocationWarn"),
+        startBtn: document.getElementById("startBtn"),
+        dashboardCard: document.getElementById("dashboardCard"),
+        dashboardTitle: document.getElementById("dashboardTitle"),
+        monthFill: document.getElementById("monthFill"),
+        monthText: document.getElementById("monthText"),
+        kCashL: document.getElementById("kCashL"),
+        kCashV: document.getElementById("kCashV"),
+        kEmergencyL: document.getElementById("kEmergencyL"),
+        kEmergencyV: document.getElementById("kEmergencyV"),
+        kDebtL: document.getElementById("kDebtL"),
+        kDebtV: document.getElementById("kDebtV"),
+        kStressL: document.getElementById("kStressL"),
+        kStressV: document.getElementById("kStressV"),
+        kWellbeingL: document.getElementById("kWellbeingL"),
+        kWellbeingV: document.getElementById("kWellbeingV"),
+        kAcademicL: document.getElementById("kAcademicL"),
+        kAcademicV: document.getElementById("kAcademicV"),
+        riskBox: document.getElementById("riskBox"),
+        scenarioCard: document.getElementById("scenarioCard"),
+        scenarioTitle: document.getElementById("scenarioTitle"),
+        scenarioBody: document.getElementById("scenarioBody"),
+        choiceContainer: document.getElementById("choiceContainer"),
+        feedback: document.getElementById("feedback"),
+        nextBtn: document.getElementById("nextBtn"),
+        reportCard: document.getElementById("reportCard"),
+        reportTitle: document.getElementById("reportTitle"),
+        reportSummary: document.getElementById("reportSummary"),
+        scoreFinancialL: document.getElementById("scoreFinancialL"),
+        scoreFinancialV: document.getElementById("scoreFinancialV"),
+        scoreWellbeingL: document.getElementById("scoreWellbeingL"),
+        scoreWellbeingV: document.getElementById("scoreWellbeingV"),
+        scoreDebtL: document.getElementById("scoreDebtL"),
+        scoreDebtV: document.getElementById("scoreDebtV"),
+        scoreResilienceL: document.getElementById("scoreResilienceL"),
+        scoreResilienceV: document.getElementById("scoreResilienceV"),
+        historyTitle: document.getElementById("historyTitle"),
+        historyList: document.getElementById("historyList"),
+        lessonsTitle: document.getElementById("lessonsTitle"),
+        lessonsList: document.getElementById("lessonsList"),
+        reflectionTitle: document.getElementById("reflectionTitle"),
+        reflectionList: document.getElementById("reflectionList"),
+        replayBtn: document.getElementById("replayBtn"),
+        allocationCard: document.getElementById("allocationCard"),
+        introCard: document.getElementById("introCard")
+      };
+
+      function tx(key) {
+        return i18n[state.lang][key];
+      }
+
+      function template(text, map) {
+        let output = text;
+        Object.keys(map).forEach((k) => {
+          output = output.replace(`{${k}}`, map[k]);
+        });
+        return output;
+      }
+
+      function clampStats() {
+        state.stress = Math.max(0, Math.min(100, state.stress));
+        state.wellbeing = Math.max(0, Math.min(100, state.wellbeing));
+        state.academic = Math.max(0, Math.min(100, state.academic));
+        state.resilience = Math.max(0, Math.min(100, state.resilience));
+      }
+
+      function statusText(value, low, mid) {
+        if (value >= mid) return tx("statusStable");
+        if (value >= low) return tx("statusWatch");
+        return tx("statusRisk");
+      }
+
+      function setRiskBox(messages) {
+        if (!messages.length) {
+          el.riskBox.classList.add("hidden");
+          el.riskBox.textContent = "";
+          return;
+        }
+        el.riskBox.classList.remove("hidden");
+        el.riskBox.textContent = messages.join(" ");
+      }
+
+      function renderHeaderAndStatic() {
+        el.title.textContent = tx("title");
+        el.subtitle.textContent = tx("subtitle");
+        el.langToggle.textContent = tx("langBtn");
+        el.introTitle.textContent = tx("introTitle");
+        el.introBody.textContent = tx("introBody");
+
+        el.introBullets.innerHTML = "";
+        tx("bullets").forEach((b) => {
+          const li = document.createElement("li");
+          li.textContent = b;
+          el.introBullets.appendChild(li);
+        });
+
+        el.allocationTitle.textContent = tx("allocationTitle");
+        el.allocationDesc.textContent = tx("allocationDesc");
+        el.labelEssentials.textContent = tx("essentialsLabel");
+        el.labelCash.textContent = tx("cashLabel");
+        el.labelEmergency.textContent = tx("emergencyLabel");
+        el.startBtn.textContent = tx("startBtn");
+
+        el.dashboardTitle.textContent = tx("dashboardTitle");
+        el.kCashL.textContent = tx("kCash");
+        el.kEmergencyL.textContent = tx("kEmergency");
+        el.kDebtL.textContent = tx("kDebt");
+        el.kStressL.textContent = tx("kStress");
+        el.kWellbeingL.textContent = tx("kWellbeing");
+        el.kAcademicL.textContent = tx("kAcademic");
+
+        el.nextBtn.textContent = tx("nextBtn");
+
+        el.reportTitle.textContent = tx("reportTitle");
+        el.reportSummary.textContent = tx("reportSummary");
+        el.scoreFinancialL.textContent = tx("scoreFinancialL");
+        el.scoreWellbeingL.textContent = tx("scoreWellbeingL");
+        el.scoreDebtL.textContent = tx("scoreDebtL");
+        el.scoreResilienceL.textContent = tx("scoreResilienceL");
+        el.historyTitle.textContent = tx("historyTitle");
+        el.lessonsTitle.textContent = tx("lessonsTitle");
+        el.reflectionTitle.textContent = tx("reflectionTitle");
+        el.replayBtn.textContent = tx("replayBtn");
+
+        el.reflectionList.innerHTML = "";
+        tx("reflections").forEach((q) => {
+          const li = document.createElement("li");
+          li.textContent = q;
+          el.reflectionList.appendChild(li);
+        });
+      }
+
+      function renderAllocationSummary() {
+        const e = Number(el.essentialsInput.value || 0);
+        const c = Number(el.cashInput.value || 0);
+        const m = Number(el.emergencyInput.value || 0);
+        const allocated = e + c + m;
+        const remaining = START_BUDGET - allocated;
+        el.allocationTotal.textContent = template(tx("allocationText"), {
+          allocated: formatHKD(allocated),
+          remaining: formatHKD(remaining)
+        });
+
+        el.allocationWarn.classList.add("hidden");
+        if (allocated > START_BUDGET) {
+          el.allocationWarn.textContent = tx("allocWarnOver");
+          el.allocationWarn.classList.remove("hidden");
+        } else if (allocated !== START_BUDGET) {
+          el.allocationWarn.textContent = tx("allocWarnMismatch");
+          el.allocationWarn.classList.remove("hidden");
+        } else if (e < MONTHLY_ESSENTIAL_COST * TOTAL_MONTHS) {
+          el.allocationWarn.textContent = tx("allocWarnLowEssentials");
+          el.allocationWarn.classList.remove("hidden");
+        }
+      }
+
+      function renderDashboard() {
+        const currentScenario = Math.min(state.scenarioIndex + 1, scenarios.length);
+        el.monthText.textContent = template(tx("monthText"), {
+          current: state.currentMonth,
+          scenario: `${currentScenario}/${scenarios.length}`
+        });
+        el.monthFill.style.width = `${(state.currentMonth / TOTAL_MONTHS) * 100}%`;
+
+        el.kCashV.textContent = formatHKD(state.cash);
+        el.kEmergencyV.textContent = formatHKD(state.emergency);
+        el.kDebtV.textContent = formatHKD(state.debt);
+        el.kStressV.textContent = `${state.stress} · ${statusText(100 - state.stress, 35, 65)}`;
+        el.kWellbeingV.textContent = `${state.wellbeing} · ${statusText(state.wellbeing, 45, 70)}`;
+        el.kAcademicV.textContent = `${state.academic} · ${statusText(state.academic, 45, 70)}`;
+
+        const risk = [];
+        if (state.debt > 1000) risk.push(tx("riskDebt"));
+        if (state.cash < 500 && state.emergency < 500) risk.push(tx("riskLowCash"));
+        if (state.wellbeing < 40) risk.push(tx("riskLowWellbeing"));
+        setRiskBox(risk);
+      }
+
+      function applyRecurringForMonth(month) {
+        const feedbackLines = [];
+
+        if (state.debt > 0) {
+          const interest = Math.round(state.debt * MONTHLY_DEBT_INTEREST);
+          state.debt += interest;
+          feedbackLines.push(template(tx("debtInterest"), { amount: formatHKD(interest) }));
+
+          const minPayment = Math.max(50, Math.round(state.debt * 0.2));
+          const paid = Math.min(state.cash, minPayment, state.debt);
+          state.cash -= paid;
+          state.debt -= paid;
+          feedbackLines.push(template(tx("debtPayment"), { amount: formatHKD(paid) }));
+          if (paid < minPayment) {
+            state.stress += 5;
+            state.wellbeing -= 3;
+            feedbackLines.push(tx("debtShortPayment"));
+          }
+        }
+
+        let costLeft = MONTHLY_ESSENTIAL_COST;
+        if (state.essentialsPool >= costLeft) {
+          state.essentialsPool -= costLeft;
+          costLeft = 0;
+        } else {
+          costLeft -= state.essentialsPool;
+          state.essentialsPool = 0;
+        }
+
+        let usedCash = 0;
+        if (costLeft > 0) {
+          const use = Math.min(state.cash, costLeft);
+          state.cash -= use;
+          usedCash += use;
+          costLeft -= use;
+        }
+
+        if (costLeft > 0) {
+          state.debt += costLeft;
+          state.stress += 7;
+          state.wellbeing -= 5;
+          feedbackLines.push(tx("recurringShortfall"));
+        }
+
+        feedbackLines.unshift(template(tx("recurringDeducted"), { month: String(month), amount: formatHKD(MONTHLY_ESSENTIAL_COST) }));
+        clampStats();
+        return feedbackLines;
+      }
+
+      function applyEmergencyCost(amount, allowBorrow) {
+        let left = amount;
+        const emergencyUsed = Math.min(state.emergency, left);
+        state.emergency -= emergencyUsed;
+        left -= emergencyUsed;
+
+        const cashUsed = Math.min(state.cash, left);
+        state.cash -= cashUsed;
+        left -= cashUsed;
+
+        let debtAdded = 0;
+        if (left > 0) {
+          if (allowBorrow) {
+            state.debt += left;
+            debtAdded = left;
+            left = 0;
+            state.stress += 5;
+          } else {
+            state.academic -= 6;
+            state.resilience -= 4;
+            state.stress += 6;
+          }
+        }
+
+        clampStats();
+        return {
+          emergencyUsed,
+          cashUsed,
+          debtAdded,
+          unresolved: left > 0
+        };
+      }
+
+      function recordHistory(scenario, choice, summary) {
+        state.history.push({
+          month: scenario.month,
+          title: scenario.title,
+          categoryKey: scenario.categoryKey,
+          choiceLabel: choice.label,
+          summary
+        });
+      }
+
+      function renderScenario() {
+        if (state.scenarioIndex >= scenarios.length) {
+          endGame();
+          return;
+        }
+
+        const scenario = scenarios[state.scenarioIndex];
+        state.currentMonth = scenario.month;
+        state.scenarioAnswered = false;
+        el.feedback.classList.add("hidden");
+        el.feedback.textContent = "";
+        el.nextBtn.classList.add("hidden");
+
+        el.scenarioTitle.textContent = `${tx(scenario.categoryKey)} · ${scenario.title[state.lang]}`;
+        el.scenarioBody.textContent = scenario.prompt[state.lang];
+
+        el.choiceContainer.innerHTML = "";
+        scenario.choices.forEach((choice, index) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "choice";
+          btn.textContent = `${String.fromCharCode(65 + index)}. ${choice.label[state.lang]}`;
+          btn.addEventListener("click", () => chooseOption(choice));
+          el.choiceContainer.appendChild(btn);
+        });
+
+        renderDashboard();
+      }
+
+      function rerenderScenarioTextOnly() {
+        if (state.scenarioIndex >= scenarios.length) return;
+        const scenario = scenarios[state.scenarioIndex];
+        el.scenarioTitle.textContent = `${tx(scenario.categoryKey)} · ${scenario.title[state.lang]}`;
+        el.scenarioBody.textContent = scenario.prompt[state.lang];
+        const buttons = el.choiceContainer.querySelectorAll("button.choice");
+        scenario.choices.forEach((choice, index) => {
+          if (buttons[index]) {
+            buttons[index].textContent = `${String.fromCharCode(65 + index)}. ${choice.label[state.lang]}`;
+          }
+        });
+      }
+
+      function chooseOption(choice) {
+        if (state.scenarioAnswered) return;
+        const scenario = scenarios[state.scenarioIndex];
+
+        let feedbackLines = [];
+        if (scenario.emergency) {
+          const result = applyEmergencyCost(choice.emergencyCost || 0, Boolean(choice.allowBorrow));
+          feedbackLines.push(template(tx("emergencyUse"), {
+            emergencyUsed: formatHKD(result.emergencyUsed),
+            cashUsed: formatHKD(result.cashUsed),
+            debtAdded: formatHKD(result.debtAdded)
+          }));
+          if (result.unresolved) {
+            feedbackLines.push(tx("emergencyNoBorrow"));
+          }
+        } else {
+          state.cash += choice.effects.cash || 0;
+          state.debt += choice.effects.debt || 0;
+        }
+
+        state.stress += choice.effects.stress || 0;
+        state.wellbeing += choice.effects.wellbeing || 0;
+        state.academic += choice.effects.academic || 0;
+        state.resilience += choice.effects.resilience || 0;
+        clampStats();
+
+        feedbackLines.push(choice.lesson[state.lang]);
+        const summary = feedbackLines.join(" ");
+
+        recordHistory(scenario, choice, summary);
+        state.lessonsSeen.add(choice.lesson[state.lang]);
+
+        el.feedback.textContent = summary || tx("defaultFeedback");
+        el.feedback.classList.remove("hidden");
+        state.scenarioAnswered = true;
+        el.nextBtn.classList.remove("hidden");
+        renderDashboard();
+      }
+
+      function scoreLabel(value) {
+        if (value >= 75) return `${value} · ${tx("statusStable")}`;
+        if (value >= 50) return `${value} · ${tx("statusWatch")}`;
+        return `${value} · ${tx("statusRisk")}`;
+      }
+
+      function endGame() {
+        el.scenarioCard.classList.add("hidden");
+        el.reportCard.classList.remove("hidden");
+
+        const netWorth = state.cash + state.emergency + state.essentialsPool - state.debt;
+        const financialSecurity = Math.max(0, Math.min(100, Math.round((netWorth / START_BUDGET) * 100 + 35)));
+        const wellbeingScore = Math.max(0, Math.min(100, Math.round((state.wellbeing + (100 - state.stress)) / 2)));
+        const debtResponsibility = Math.max(0, Math.min(100, Math.round(100 - (state.debt / START_BUDGET) * 130)));
+        const resilienceScore = Math.max(0, Math.min(100, Math.round((state.resilience + state.academic) / 2)));
+
+        el.scoreFinancialV.textContent = `${scoreLabel(financialSecurity)} (${formatHKD(netWorth)})`;
+        el.scoreWellbeingV.textContent = scoreLabel(wellbeingScore);
+        el.scoreDebtV.textContent = `${scoreLabel(debtResponsibility)} (${formatHKD(state.debt)})`;
+        el.scoreResilienceV.textContent = scoreLabel(resilienceScore);
+
+        el.historyList.innerHTML = "";
+        state.history.forEach((h) => {
+          const li = document.createElement("li");
+          li.textContent = `M${h.month} ${tx(h.categoryKey)} - ${h.choiceLabel[state.lang]}: ${h.summary}`;
+          el.historyList.appendChild(li);
+        });
+
+        el.lessonsList.innerHTML = "";
+        Array.from(state.lessonsSeen).slice(0, 8).forEach((lesson) => {
+          const li = document.createElement("li");
+          li.textContent = lesson;
+          el.lessonsList.appendChild(li);
+        });
+      }
+
+      function nextStep() {
+        if (!state.started) return;
+        state.scenarioIndex += 1;
+        if (state.scenarioIndex >= scenarios.length) {
+          endGame();
+          return;
+        }
+
+        const monthNow = scenarios[state.scenarioIndex].month;
+        const monthPrev = scenarios[state.scenarioIndex - 1].month;
+        let recurringMessage = "";
+        if (monthNow !== monthPrev) {
+          const recurringMsgs = applyRecurringForMonth(monthNow);
+          recurringMessage = recurringMsgs.join(" ");
+        }
+        renderScenario();
+        if (recurringMessage) {
+          el.feedback.textContent = recurringMessage;
+          el.feedback.classList.remove("hidden");
+        }
+      }
+
+      function resetGame() {
+        state.started = false;
+        state.scenarioIndex = 0;
+        state.currentMonth = 1;
+        state.essentialsPool = 0;
+        state.cash = 0;
+        state.emergency = 0;
+        state.debt = 0;
+        state.stress = 25;
+        state.wellbeing = 70;
+        state.academic = 70;
+        state.resilience = 50;
+        state.history = [];
+        state.lessonsSeen = new Set();
+        state.scenarioAnswered = false;
+
+        el.essentialsInput.value = "4800";
+        el.cashInput.value = "3000";
+        el.emergencyInput.value = "1200";
+
+        el.allocationCard.classList.remove("hidden");
+        el.introCard.classList.remove("hidden");
+        el.dashboardCard.classList.add("hidden");
+        el.scenarioCard.classList.add("hidden");
+        el.reportCard.classList.add("hidden");
+
+        renderHeaderAndStatic();
+        renderAllocationSummary();
+      }
+
+      function startGame() {
+        const essentials = Number(el.essentialsInput.value || 0);
+        const cash = Number(el.cashInput.value || 0);
+        const emergency = Number(el.emergencyInput.value || 0);
+        const total = essentials + cash + emergency;
+
+        if (total > START_BUDGET) {
+          el.allocationWarn.textContent = tx("allocWarnOver");
+          el.allocationWarn.classList.remove("hidden");
+          return;
+        }
+        if (total !== START_BUDGET) {
+          el.allocationWarn.textContent = tx("allocWarnMismatch");
+          el.allocationWarn.classList.remove("hidden");
+          return;
+        }
+
+        state.started = true;
+        state.essentialsPool = essentials;
+        state.cash = cash;
+        state.emergency = emergency;
+        state.debt = 0;
+        state.scenarioIndex = 0;
+        state.history = [];
+        state.lessonsSeen = new Set();
+        state.stress = 25;
+        state.wellbeing = 70;
+        state.academic = 70;
+        state.resilience = 50;
+
+        const recurringMsgs = applyRecurringForMonth(1);
+
+        el.introCard.classList.add("hidden");
+        el.allocationCard.classList.add("hidden");
+        el.dashboardCard.classList.remove("hidden");
+        el.scenarioCard.classList.remove("hidden");
+
+        renderScenario();
+        el.feedback.textContent = recurringMsgs.join(" ");
+        el.feedback.classList.remove("hidden");
+      }
+
+      el.langToggle.addEventListener("click", function () {
+        state.lang = state.lang === "en" ? "zh" : "en";
+        renderHeaderAndStatic();
+        if (state.started && state.scenarioIndex < scenarios.length) {
+          rerenderScenarioTextOnly();
+        }
+        if (state.started) {
+          renderDashboard();
+        }
+      });
+
+      [el.essentialsInput, el.cashInput, el.emergencyInput].forEach((input) => {
+        input.addEventListener("input", renderAllocationSummary);
+      });
+
+      el.startBtn.addEventListener("click", startGame);
+      el.nextBtn.addEventListener("click", nextStep);
+      el.replayBtn.addEventListener("click", resetGame);
+
+      resetGame();
+    })();
+  </script>
+</body>
+</html>
