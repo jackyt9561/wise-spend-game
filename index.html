@@ -34,7 +34,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Language Switcher (Only visible on start screen) -->
+        <!-- Language Switcher -->
         <div id="lang-switcher-container" class="absolute top-4 right-4 z-50">
             <button onclick="toggleLanguage()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm font-bold shadow-sm transition">
                 <span id="lang-btn-text">中 / EN</span>
@@ -49,10 +49,10 @@
             <div class="bg-blue-50 p-4 rounded-xl text-left w-full mt-4 mb-4 shadow-sm border border-blue-100">
                 <h2 id="start-intro-title" class="font-bold text-blue-800 mb-2">📜 遊戲設定與規則</h2>
                 <p id="start-intro-1" class="text-sm text-gray-700 mb-2">
-                    你即將開始 3 個月的大學生活。你的學費和宿舍租金已經繳清，目前手上擁有 <strong>HK$6,000</strong> 的「可支配餘額」。你必須用這筆錢應付飲食、交通、娛樂及突發事件。
+                    你即將開始 3 個月的大學生活。你的學費和宿舍租金已經繳清，目前手上擁有 <strong>HK$4,000</strong> 的「可支配餘額」。你必須用這筆錢應付飲食、交通、娛樂及突發事件。
                 </p>
                 <p id="start-intro-2" class="text-sm text-gray-700 mb-2">
-                    除了金錢，你還要注意 <strong>心理壓力值 (0-100)</strong>。過度壓抑自己會導致壓力爆錶，而適當的娛樂能降低壓力。
+                    除了金錢，你還要注意 <strong>心理壓力值 (0-100)</strong>。過度壓抑自己會導致壓力爆錶，而適當的娛樂能降低壓力。某些選擇能幫你累積「緊急儲備金」。
                 </p>
             </div>
 
@@ -83,7 +83,7 @@
                 <!-- Budget Bar -->
                 <div class="flex justify-between text-sm font-bold mt-2">
                     <span id="ui-budget-label">💰 預算剩餘:</span>
-                    <span id="budget-display" class="text-blue-600">HK$6,000</span>
+                    <span id="budget-display" class="text-blue-600">HK$4,000</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2 mt-1 mb-3">
                     <div id="budget-bar" class="bg-blue-500 h-2 rounded-full progress-bar-fill" style="width: 100%"></div>
@@ -210,9 +210,9 @@
                 <div class="mt-6 border-t pt-4">
                     <h3 id="ui-reflection-title" class="font-bold text-sm mb-2 text-gray-800">🤔 課後反思 (Reflection)</h3>
                     <ul class="text-xs text-gray-600 list-decimal pl-4 space-y-1" id="reflection-list">
-                        <li>在遊戲中，哪一個決定讓你感到最掙扎？</li>
-                        <li>你認為自己更看重金錢、減壓，還是社交關係？</li>
-                        <li>如果現實中遇到電腦壞掉，你目前的戶口能應付嗎？</li>
+                        <li id="ref1">在遊戲中，哪一個決定讓你感到最掙扎？</li>
+                        <li id="ref2">你認為自己更看重金錢、減壓，還是社交關係？</li>
+                        <li id="ref3">如果現實中遇到電腦壞掉，你目前的戶口能應付嗎？</li>
                     </ul>
                 </div>
 
@@ -222,7 +222,7 @@
                 </div>
             </div>
 
-            <!-- Action Buttons (Not included in screenshot) -->
+            <!-- Action Buttons -->
             <div class="mt-6 space-y-3" data-html2canvas-ignore>
                 <button onclick="downloadReport()" id="btn-download" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-indigo-700 transition flex items-center justify-center">
                     📸 儲存診斷報告 (截圖)
@@ -235,18 +235,17 @@
     </div>
 
     <script>
-        // Game State Variables
-        const INIT_BUDGET = 6000;
+        // Game State Variables (Decreased Init Budget for higher difficulty)
+        const INIT_BUDGET = 4000;
         let budget = INIT_BUDGET;
         let emergencyFund = 0;
         let stress = 0;
         let currentStage = 0;
-        let lang = 'zh'; // 'zh' or 'en'
+        let lang = 'zh'; 
         
         let choiceHistory = { A: 0, B: 0, C: 0 };
-        let endReason = "completed"; // "completed", "bankrupt", "stress"
+        let endReason = "completed"; 
 
-        // Format Money string
         function formatMoney(val) {
             return val < 0 ? `-HK$${Math.abs(val).toLocaleString()}` : `HK$${val.toLocaleString()}`;
         }
@@ -257,7 +256,7 @@
                 langBtn: "中 / EN",
                 startTitle: "大學生存指南<br><span class='text-xl text-gray-500'>90日財務保衛戰</span>",
                 startIntroTitle: "📜 遊戲設定與規則",
-                startIntro1: "你即將開始 3 個月的大學生活。你的學費和宿舍租金已經繳清，目前手上擁有 <strong>HK$6,000</strong> 的「可支配餘額」。你必須用這筆錢應付飲食、交通、娛樂及突發事件。",
+                startIntro1: "你即將開始 3 個月的大學生活。你的學費和宿舍租金已經繳清，目前手上擁有 <strong>HK$4,000</strong> 的「可支配餘額」。你必須用這筆錢應付飲食、交通、娛樂及突發事件。",
                 startIntro2: "除了金錢，你還要注意 <strong>心理壓力值 (0-100)</strong>。過度壓抑自己會導致壓力爆錶，而適當的娛樂能降低壓力。某些選擇能幫你累積「緊急儲備金」。",
                 startObjTitle: "🎯 學習目標 (Learning Objectives)",
                 obj1: "區分「想要 (Wants)」與「需要 (Needs)」",
@@ -274,6 +273,7 @@
                 warningBudgetDesc: "你過度使用了信用卡借貸，債務爆煲，無法繼續應付基本生活！",
                 warningStressTitle: "壓力爆錶！",
                 warningStressDesc: "過度的壓抑與焦慮讓你崩潰了，你需要立刻暫停一切休息！",
+                reportTitle: "診斷報告",
                 uiDimTitle: "綜合能力評估",
                 dim1: "財務安全", dim2: "身心健康", dim3: "責任感", dim4: "應變能力",
                 uiStatsTitle: "最終數值",
@@ -294,7 +294,7 @@
                 langBtn: "EN / 中",
                 startTitle: "Uni Survival Guide<br><span class='text-xl text-gray-500'>90-Day Financial Defense</span>",
                 startIntroTitle: "📜 Game Rules & Setting",
-                startIntro1: "You are starting a 3-month semester. Rent and tuition are paid. You have a <strong>HK$6,000</strong> discretionary budget to manage food, transport, entertainment, and emergencies.",
+                startIntro1: "You are starting a 3-month semester. Rent and tuition are paid. You have a <strong>HK$4,000</strong> discretionary budget to manage food, transport, entertainment, and emergencies.",
                 startIntro2: "You must also manage your <strong>Mental Stress (0-100)</strong>. Extreme deprivation leads to a breakdown. Smart choices will help you build an 'Emergency Fund'.",
                 startObjTitle: "🎯 Learning Objectives",
                 obj1: "Distinguish 'Wants' from 'Needs'",
@@ -311,6 +311,7 @@
                 warningBudgetDesc: "You overused your credit cards and the debt has crushed your ability to survive!",
                 warningStressTitle: "Stress Breakdown!",
                 warningStressDesc: "Extreme deprivation caused a mental breakdown. You need immediate rest!",
+                reportTitle: "Diagnostic Report",
                 uiDimTitle: "Comprehensive Assessment",
                 dim1: "Financial Security", dim2: "Wellbeing", dim3: "Responsibility", dim4: "Flexibility",
                 uiStatsTitle: "Final Stats",
@@ -329,7 +330,7 @@
             }
         };
 
-        // Game Data (10 Stages) with Trade-offs and Principles
+        // Game Data with Increased Option A costs
         const gameData = [
             {
                 stageZh: "M1 月頭", stageEn: "M1 Start",
@@ -338,11 +339,11 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "花幾千蚊買最新款 iPad Pro 和配件", textEn: "Buy the latest iPad Pro & accessories", 
-                        budget: -3000, emergency: 0, stress: -10, 
+                        textZh: "花大錢買最新款 iPad Pro 和配件", textEn: "Buy the latest iPad Pro & accessories", 
+                        budget: -2500, emergency: 0, stress: -10, 
                         principleZh: "生活方式膨脹 (Lifestyle Inflation)", principleEn: "Lifestyle Inflation",
                         quoteZh: "「工欲善其事，必先利其器，當投資自己啦！」", quoteEn: "'An investment in myself!'",
-                        lessonZh: "盲目追求頂配設備，會在學期初就耗盡你一半的抗風險能力。", lessonEn: "Buying premium gear instantly drains your emergency safety net."
+                        lessonZh: "盲目追求頂配設備，會在學期初就耗盡你大半的抗風險能力。", lessonEn: "Buying premium gear instantly drains your emergency safety net."
                     },
                     { 
                         type: 'B',
@@ -364,13 +365,13 @@
             },
             {
                 stageZh: "M1 月中", stageEn: "M1 Mid",
-                questionZh: "同學約你去食高檔韓燒破冰，每位 $400。",
-                questionEn: "Classmates invite you to a premium K-BBQ ($400/person) to socialize.",
+                questionZh: "同學約你去食高檔韓燒及唱 K 破冰，每位 $500。",
+                questionEn: "Classmates invite you to a premium K-BBQ and Karaoke ($500/person).",
                 options: [
                     { 
                         type: 'A',
                         textZh: "去！大家都去，唔去好唔合群", textEn: "Go! I don't want to miss out.", 
-                        budget: -400, emergency: 0, stress: -15, 
+                        budget: -500, emergency: 0, stress: -15, 
                         principleZh: "錯失恐懼症 (FOMO)", principleEn: "Fear Of Missing Out (FOMO)",
                         quoteZh: "「啱啱開學，當識多幾個朋友啦！」", quoteEn: "'Just started the term, need to make friends!'",
                         lessonZh: "為了維持合群而產生的「社交通脹」，是大學生預算透支的元兇。", lessonEn: "Social inflation to fit in is the main cause of student budget deficits."
@@ -400,8 +401,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "立刻 Call Uber 飛的趕回學校", textEn: "Call an Uber immediately to rush to campus.", 
-                        budget: -120, emergency: 0, stress: -5, 
+                        textZh: "立刻 Call 附加費極高的 Uber 飛的趕回學校", textEn: "Call an expensive surge-pricing Uber to rush to campus.", 
+                        budget: -200, emergency: 0, stress: -5, 
                         principleZh: "隱形成本 (Hidden Costs)", principleEn: "Hidden Costs of Bad Habits",
                         quoteZh: "「扣分會爛 Grade！用錢買時間好合理！」", quoteEn: "'Losing marks is bad! Buying time with money is justified.'",
                         lessonZh: "生活習慣不佳（如遲起床）往往會引發懲罰性的高額開支。", lessonEn: "Poor time management directly causes expensive 'penalty' spending."
@@ -431,8 +432,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "瘋狂課金買 Game 及抽卡包減壓", textEn: "Spend heavily on games and gacha boxes to destress.", 
-                        budget: -400, emergency: 0, stress: -20, 
+                        textZh: "瘋狂課金做課長，買下多款特價大作減壓", textEn: "Whale heavily on games and gacha boxes to destress.", 
+                        budget: -800, emergency: 0, stress: -20, 
                         principleZh: "錨定效應 (Anchoring Effect)", principleEn: "Anchoring Effect (Sales Trap)",
                         quoteZh: "「半價真係超抵！錯過咗以後買唔返！」", quoteEn: "'Half price is a steal! I can't miss this deal!'",
                         lessonZh: "商家的特價會誤導你以為賺了。記住：只要你花錢了，就是支出。", lessonEn: "Sales trick you into thinking you are saving. Spending is spending."
@@ -462,8 +463,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "叫 Foodpanda 貴價外賣送上門", textEn: "Order expensive premium food delivery.", 
-                        budget: -150, emergency: 0, stress: -10, 
+                        textZh: "叫 Foodpanda 附加費極高的宵夜外賣送上門", textEn: "Order expensive premium food delivery with late-night surcharges.", 
+                        budget: -250, emergency: 0, stress: -10, 
                         principleZh: "便利溢價 (Convenience Premium)", principleEn: "Convenience Premium",
                         quoteZh: "「咁辛苦，食餐好慰勞自己啦！」", quoteEn: "'Working hard, I deserve a good premium meal!'",
                         lessonZh: "外賣平台包含大量隱藏溢價，頻繁使用會迅速侵蝕預算。", lessonEn: "Delivery apps include high markup fees. Frequent use destroys budgets quickly."
@@ -493,8 +494,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "覺得麻煩，由得它繼續自動扣款", textEn: "Too lazy to manage, let them continue auto-renewing.", 
-                        budget: -200, emergency: 0, stress: 0, 
+                        textZh: "覺得麻煩，由得所有的年費繼續自動扣款", textEn: "Too lazy to manage, let all expensive annual fees auto-renew.", 
+                        budget: -350, emergency: 0, stress: 0, 
                         principleZh: "拿鐵因子 (Latte Factor)", principleEn: "Subscription Leakage (Latte Factor)",
                         quoteZh: "「每個月幾十蚊啫，費事逐個去 Cut。」", quoteEn: "'It's just a few dollars a month. Too much hassle to cancel.'",
                         lessonZh: "不起眼的自動扣款是無形殺手，沒有 Audit 習慣會造成資金持續流失。", lessonEn: "Small automatic subscriptions leak money invisibly over time."
@@ -524,8 +525,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "花大錢上網買師兄師姐的「天價精讀筆記」", textEn: "Buy expensive 'perfect summary notes' from senior students.", 
-                        budget: -300, emergency: 0, stress: -10, 
+                        textZh: "花大錢報名補習班並買下所有「天價精讀筆記」", textEn: "Pay for expensive crash courses and 'perfect summary notes'.", 
+                        budget: -500, emergency: 0, stress: -10, 
                         principleZh: "捷徑思維 (Shortcut Thinking)", principleEn: "Shortcut Thinking",
                         quoteZh: "「用錢解決到嘅問題就唔係問題，買個安心。」", quoteEn: "'Money can solve this. Buying peace of mind.'",
                         lessonZh: "依賴金錢買捷徑，往往忽略了親自整理資料也是學習吸收的過程。", lessonEn: "Relying on money to buy shortcuts bypasses the actual learning process."
@@ -555,8 +556,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "向 Mox Bank 借取循環貸款作生活費", textEn: "Take a fast cash loan from a digital bank for living expenses.", 
-                        budget: 500, emergency: 0, stress: +20, 
+                        textZh: "向銀行借取高息循環貸款作生活費，不工作", textEn: "Take a high-interest fast cash loan for living expenses. Don't work.", 
+                        budget: 800, emergency: 0, stress: +20, 
                         principleZh: "債務陷阱 (Debt Trap)", principleEn: "Debt Trap & Interest Rates",
                         quoteZh: "「就快 Exam 無時間做 Part-time，借住少少頂住先啦。」", quoteEn: "'No time to work. Just borrow a little to survive.'",
                         lessonZh: "習慣用未來的錢解決當下的缺口，是陷入高息信貸危機的第一步。", lessonEn: "Using future money (debt) to solve present deficits leads to credit crises."
@@ -586,8 +587,8 @@
                 options: [
                     { 
                         type: 'A',
-                        textZh: "連續一星期每日買一杯 $40 Starbucks 咖啡", textEn: "Buy a $40 Starbucks coffee every day for a week.", 
-                        budget: -280, emergency: 0, stress: -5, 
+                        textZh: "連續一星期每日買最貴的 Starbucks 咖啡加甜品", textEn: "Buy expensive Starbucks coffee and pastries every day for a week.", 
+                        budget: -300, emergency: 0, stress: -5, 
                         principleZh: "依賴性消費 (Dependency Spending)", principleEn: "Dependency Spending",
                         quoteZh: "「無咖啡真係頂唔順，呢筆錢唔慳得。」", quoteEn: "'I can't survive without coffee. Must spend this money.'",
                         lessonZh: "用金錢購買短暫的化學提神，長期會形成高昂的依賴性開支。", lessonEn: "Buying chemical energy (caffeine) creates an expensive dependency."
@@ -618,7 +619,7 @@
                     { 
                         type: 'A',
                         textZh: "立刻支付 HK$1,500 進行緊急搶修 (優先扣除儲備金)", textEn: "Pay HK$1,500 for emergency repair (Deducts from Emergency Fund first).", 
-                        budget: -1500, emergency: 0, stress: -10, // Logic handled in JS
+                        budget: -1500, emergency: 0, stress: -10, 
                         principleZh: "風險轉移 (Risk Transfer)", principleEn: "Emergency Preparedness",
                         quoteZh: "「錢可以解決嘅危機就唔係危機，最緊要交到份功課！」", quoteEn: "'If money can solve the crisis, it's just an expense. Must submit the project!'",
                         lessonZh: "這就是儲備金存在的意義：讓意外只是一筆花費，而不是一場災難。", lessonEn: "This is why emergency funds exist: turning a disaster into a mere inconvenience."
@@ -642,9 +643,9 @@
             document.getElementById('lang-btn-text').innerText = i18n[lang].langBtn;
             updateStaticText();
             if (!document.getElementById('start-screen').classList.contains('hidden') && currentStage === 0) {
-                // We are at start screen
+                // At start screen
             } else if (!document.getElementById('game-ui').classList.contains('hidden')) {
-                renderQuestion(); // Re-render current question in new language
+                renderQuestion(); 
             }
         }
 
@@ -667,6 +668,9 @@
             document.getElementById('btn-next-stage').innerText = t.btnNextStage;
             document.getElementById('btn-force-end').innerText = t.btnForceEnd;
             
+            // Fix for English Report Title
+            document.getElementById('report-title').innerText = t.reportTitle;
+            
             document.getElementById('ui-dimension-title').innerText = t.uiDimTitle;
             document.getElementById('ui-dim-1').innerText = t.dim1;
             document.getElementById('ui-dim-2').innerText = t.dim2;
@@ -682,10 +686,12 @@
             document.getElementById('ui-principle-label').innerText = t.uiPrinciple;
             
             document.getElementById('ui-reflection-title').innerText = t.uiReflection;
+            // Fix for English Reflection Questions
             document.getElementById('ref1').innerText = t.ref1;
             document.getElementById('ref2').innerText = t.ref2;
             document.getElementById('ref3').innerText = t.ref3;
             
+            // Fix for English Buttons
             document.getElementById('btn-download').innerText = t.btnDownload;
             document.getElementById('btn-restart').innerText = t.btnRestart;
             document.getElementById('report-watermark').innerText = t.watermark;
@@ -700,7 +706,7 @@
             endReason = "completed";
             
             document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('lang-switcher-container').classList.add('hidden'); // Hide lang btn during play
+            document.getElementById('lang-switcher-container').classList.add('hidden'); 
             document.getElementById('report-screen').classList.add('hidden');
             document.getElementById('game-ui').classList.remove('hidden');
             document.getElementById('game-ui').classList.add('flex');
@@ -733,17 +739,21 @@
                 const btn = document.createElement('button');
                 btn.className = "w-full text-left bg-white hover:bg-blue-50 border-2 border-gray-100 p-4 rounded-xl transition active:scale-95 shadow-sm";
                 
-                // Construct money text display
                 let moneyText = "";
                 let eText = "";
+                let sText = "";
+                
                 if (opt.budget < 0) moneyText = `<span class="text-red-500 font-bold ml-2">(${formatMoney(opt.budget)})</span>`;
                 else if (opt.budget > 0) moneyText = `<span class="text-green-500 font-bold ml-2">(+HK$${opt.budget})</span>`;
                 
                 if (opt.emergency > 0) eText = `<span class="text-green-600 font-bold ml-2 text-xs">🏦 +HK$${opt.emergency}</span>`;
+                
+                // Add Stress indicator specifically for options that increase stress
+                if (opt.stress > 0) sText = `<span class="text-red-500 font-bold ml-2 text-xs">🧠 +${opt.stress} ${lang === 'zh' ? '壓力' : 'Stress'}</span>`;
 
                 btn.innerHTML = `
                     <div class="flex font-bold text-blue-600 mb-1">選項 ${opt.type}</div>
-                    <div class="text-gray-700 text-sm">${lang === 'zh' ? opt.textZh : opt.textEn} ${moneyText} ${eText}</div>
+                    <div class="text-gray-700 text-sm">${lang === 'zh' ? opt.textZh : opt.textEn} ${moneyText} ${eText} ${sText}</div>
                 `;
                 btn.onclick = () => selectOption(index);
                 optionsContainer.appendChild(btn);
@@ -753,25 +763,22 @@
         function selectOption(optIndex) {
             const opt = gameData[currentStage].options[optIndex];
             
-            // Special Logic for Crisis (Stage 9 Option A - Repair)
             let actualBudgetChange = opt.budget;
             let actualEmergencyChange = opt.emergency;
 
             if (currentStage === 9 && opt.type === 'A') {
                 if (emergencyFund >= 1500) {
                     actualEmergencyChange = -1500;
-                    actualBudgetChange = 0; // Covered entirely by emergency fund
+                    actualBudgetChange = 0; 
                 } else {
                     const remainder = 1500 - emergencyFund;
-                    actualEmergencyChange = -emergencyFund; // Drain emergency fund
-                    actualBudgetChange = -remainder; // Rest hits budget
+                    actualEmergencyChange = -emergencyFund; 
+                    actualBudgetChange = -remainder; 
                 }
             }
 
-            // Record History
             if(opt.type) choiceHistory[opt.type]++;
             
-            // Update Stats
             budget += actualBudgetChange;
             emergencyFund += actualEmergencyChange;
             stress += opt.stress;
@@ -779,7 +786,6 @@
 
             updateUI();
 
-            // Populate Feedback Modal
             const t = i18n[lang];
             document.getElementById('feedback-title').innerText = `${t.uiPrinciple.split(' ')[1]} ${opt.type}`;
             document.getElementById('feedback-quote').innerText = lang === 'zh' ? opt.quoteZh : opt.quoteEn;
@@ -790,7 +796,6 @@
             document.getElementById('change-emergency').innerHTML = actualEmergencyChange !== 0 ? `<span class='text-green-600 font-bold'>${formatMoney(actualEmergencyChange)}</span>` : `<span class='text-gray-500'>-</span>`;
             document.getElementById('change-stress').innerHTML = opt.stress > 0 ? `<span class='text-red-500'>+${opt.stress}</span>` : `<span class='text-green-500'>${opt.stress}</span>`;
 
-            // INSTANT FAIL CHECK BEFORE SHOWING FEEDBACK
             if (budget < 0) {
                 endReason = "bankrupt";
                 showWarning(t.warningBudgetTitle, t.warningBudgetDesc);
@@ -827,7 +832,7 @@
             }
 
             document.getElementById('emergency-display').innerText = formatMoney(emergencyFund);
-            document.getElementById('emergency-bar').style.width = Math.min((emergencyFund/1500)*100, 100) + "%"; // Max cap visual at 1500
+            document.getElementById('emergency-bar').style.width = Math.min((emergencyFund/1500)*100, 100) + "%"; 
 
             document.getElementById('stress-display').innerText = `${stress} / 100`;
             const sBar = document.getElementById('stress-bar');
@@ -867,7 +872,6 @@
 
             const t = i18n[lang];
 
-            // Set final stats
             document.getElementById('final-budget').innerText = formatMoney(budget);
             document.getElementById('final-budget').className = budget < 0 ? "font-bold text-red-600" : "font-bold text-blue-600";
             
@@ -877,7 +881,6 @@
             document.getElementById('final-stress').innerText = stress + " / 100";
             document.getElementById('final-stress').className = stress > 80 ? "font-bold text-red-600" : "font-bold text-green-600";
 
-            // Calculate 4 Dimensions
             const e1 = document.getElementById('score-finance');
             const e2 = document.getElementById('score-wellbeing');
             const e3 = document.getElementById('score-responsibility');
@@ -894,7 +897,6 @@
                 e3.innerText = t.scoreLow;
                 e4.innerText = t.scoreLow;
             } else {
-                // Completed
                 e1.innerText = (budget + emergencyFund) > 2000 ? t.scoreHigh : t.scoreMed;
                 e2.innerText = stress < 50 ? t.scoreHigh : (stress > 80 ? t.scoreLow : t.scoreMed);
                 e3.innerText = t.scoreHigh;
@@ -902,7 +904,6 @@
                 if (emergencyFund >= 1500) e4.className = "font-black text-green-600";
             }
 
-            // Set Analysis Text & Emoji
             const analysisEl = document.getElementById('report-analysis');
             const emojiEl = document.getElementById('report-emoji');
 
@@ -939,9 +940,8 @@
         function resetGame() {
             document.getElementById('report-screen').classList.add('hidden');
             document.getElementById('start-screen').classList.remove('hidden');
-            document.getElementById('lang-switcher-container').classList.remove('hidden'); // Show lang btn again
+            document.getElementById('lang-switcher-container').classList.remove('hidden'); 
             
-            // Reset visual indicator just in case
             document.getElementById('stage-indicator').classList.replace('bg-red-100', 'bg-blue-50');
             document.getElementById('stage-indicator').classList.replace('text-red-600', 'text-blue-500');
         }
@@ -949,6 +949,7 @@
         function downloadReport() {
             const element = document.getElementById("report-content");
             const btn = document.getElementById("btn-download");
+            const t = i18n[lang];
             
             btn.innerText = lang === 'zh' ? "⏳ 正在生成圖片..." : "⏳ Generating...";
             
@@ -963,12 +964,11 @@
                 link.click();
                 btn.innerText = lang === 'zh' ? "✅ 下載成功！" : "✅ Downloaded!";
                 setTimeout(() => { 
-                    btn.innerText = lang === 'zh' ? "📸 儲存診斷報告 (截圖)" : "📸 Save Report (Screenshot)"; 
+                    btn.innerText = t.btnDownload; 
                 }, 3000);
             });
         }
 
-        // Initialize Language on load
         window.onload = updateStaticText;
     </script>
 </body>
