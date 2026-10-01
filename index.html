@@ -34,7 +34,7 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Language Switcher -->
+        <!-- Language Switcher (Only visible on start screen) -->
         <div id="lang-switcher-container" class="absolute top-4 right-4 z-50">
             <button onclick="toggleLanguage()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm font-bold shadow-sm transition">
                 <span id="lang-btn-text">中 / EN</span>
@@ -44,30 +44,25 @@
         <!-- 1. Start Screen -->
         <div id="start-screen" class="p-6 flex flex-col items-center justify-center min-h-screen text-center fade-in">
             <div class="text-5xl mb-4">🎓</div>
-            <h1 id="start-title" class="text-3xl font-black mb-2 text-blue-600">大學生存指南<br><span class="text-xl text-gray-500">90日財務保衛戰</span></h1>
+            <h1 id="start-title" class="text-3xl font-black mb-2 text-blue-600">大學生存指南<br><span class="text-xl text-gray-500">財務行為測試</span></h1>
             
             <div class="bg-blue-50 p-4 rounded-xl text-left w-full mt-4 mb-4 shadow-sm border border-blue-100">
-                <h2 id="start-intro-title" class="font-bold text-blue-800 mb-2">📜 遊戲設定與規則</h2>
+                <h2 id="start-intro-title" class="font-bold text-blue-800 mb-2">📜 測試設定與規則</h2>
                 <p id="start-intro-1" class="text-sm text-gray-700 mb-2">
-                    你即將開始 3 個月的大學生活。你的學費和宿舍租金已經繳清，目前手上擁有 <strong>HK$4,000</strong> 的「可支配餘額」。你必須用這筆錢應付飲食、交通、娛樂及突發事件。
+                    歡迎來到大學！你的學費和租金已繳清，目前擁有 <strong>HK$4,000</strong> 的「可支配餘額」。你必須在 90 天內管理飲食、社交與突發事件。
                 </p>
                 <p id="start-intro-2" class="text-sm text-gray-700 mb-2">
-                    除了金錢，你還要注意 <strong>心理壓力值 (0-100)</strong>。過度壓抑自己會導致壓力爆錶，而適當的娛樂能降低壓力。某些選擇能幫你累積「緊急儲備金」。
+                    遊戲將追蹤你的每一個選擇，並在最後生成你的專屬<strong>「財務行為特徵 (Financial Behaviour Profile)」</strong>。找出你的理財優勢與盲點！
                 </p>
             </div>
 
-            <div class="bg-indigo-50 p-4 rounded-xl text-left w-full mb-6 shadow-sm border border-indigo-100">
-                <h2 id="start-obj-title" class="font-bold text-indigo-800 mb-2">🎯 學習目標 (Learning Objectives)</h2>
-                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
-                    <li id="obj-1">區分「想要 (Wants)」與「需要 (Needs)」</li>
-                    <li id="obj-2">建立並保護「緊急儲備金 (Emergency Fund)」</li>
-                    <li id="obj-3">認識借貸成本與債務壓力</li>
-                    <li id="obj-4">在財務與身心健康中取得平衡</li>
-                </ul>
-            </div>
+            <!-- Pre-Game Form Link -->
+            <a href="YOUR_PRE_SURVEY_LINK_HERE" target="_blank" id="btn-pre-form" class="w-full bg-indigo-100 text-indigo-700 font-bold py-3 rounded-xl shadow-sm hover:bg-indigo-200 transition text-center mb-3 text-sm border border-indigo-200 flex items-center justify-center">
+                📋 第 1 步：填寫課前問卷 (Pre-Game Survey)
+            </a>
 
             <button onclick="startGame()" id="start-btn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition active:scale-95 text-lg">
-                開始挑戰
+                第 2 步：開始挑戰 (Start Game)
             </button>
         </div>
 
@@ -119,13 +114,12 @@
             </div>
         </div>
 
-        <!-- 3. Feedback Modal (After each choice) -->
+        <!-- 3. Feedback Modal -->
         <div id="feedback-modal" class="hidden absolute inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl fade-in relative">
                 <h3 id="feedback-title" class="text-xl font-black mb-3 text-center"></h3>
                 <div class="bg-gray-50 italic text-gray-600 p-3 rounded-lg text-sm mb-4 border-l-4 border-gray-300" id="feedback-quote"></div>
                 
-                <!-- Financial Principle Section -->
                 <div class="bg-blue-50 p-3 rounded-lg mb-4 border border-blue-100">
                     <p class="text-xs font-bold text-blue-800 uppercase mb-1" id="ui-principle-label">💡 理財法則 (Principle)</p>
                     <p id="feedback-principle" class="text-sm font-bold text-gray-800 mb-1"></p>
@@ -133,9 +127,9 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center text-sm font-bold mb-5 bg-gray-50 p-2 rounded-lg">
-                    <div>預算<br><span id="change-budget"></span></div>
-                    <div>儲備<br><span id="change-emergency"></span></div>
-                    <div>壓力<br><span id="change-stress"></span></div>
+                    <div><span id="label-modal-budget">預算</span><br><span id="change-budget"></span></div>
+                    <div><span id="label-modal-emergency">儲備</span><br><span id="change-emergency"></span></div>
+                    <div><span id="label-modal-stress">壓力</span><br><span id="change-stress"></span></div>
                 </div>
                 <button onclick="nextStage()" id="btn-next-stage" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-700 transition">
                     繼續下一階段
@@ -143,49 +137,50 @@
             </div>
         </div>
 
-        <!-- 4. Warning/Game Over Modal (Debt/Stress Limit) -->
+        <!-- 4. Warning/Game Over Modal -->
         <div id="warning-modal" class="hidden absolute inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl fade-in text-center border-t-8 border-red-500">
                 <div class="text-6xl mb-2">🚨</div>
                 <h3 id="warning-title" class="text-2xl font-black mb-2 text-red-600"></h3>
                 <p id="warning-desc" class="text-gray-700 mb-6"></p>
                 <button onclick="forceEndGame()" id="btn-force-end" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 transition shadow-lg">
-                    查看診斷報告
+                    查看行為診斷報告
                 </button>
             </div>
         </div>
 
         <!-- 5. Final Report Screen -->
         <div id="report-screen" class="hidden bg-gray-50 min-h-screen p-5 pb-24">
-            <div id="report-content" class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+            <div id="report-content" class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 relative">
                 <div class="text-center mb-6 border-b pb-4">
                     <div class="text-5xl mb-2" id="report-emoji">🏆</div>
-                    <h2 id="report-title" class="text-2xl font-black text-gray-800 mb-1">診斷報告</h2>
-                    <p id="report-subtitle" class="text-sm text-gray-500">WiseSpend Report</p>
+                    <h2 id="report-title" class="text-2xl font-black text-gray-800 mb-1">行為診斷報告</h2>
+                    <p id="report-subtitle" class="text-sm text-gray-500">WiseSpend Behaviour Profile</p>
                 </div>
                 
-                <!-- 4 Dimensions Score -->
-                <h3 id="ui-dimension-title" class="font-bold text-lg mb-3 text-gray-800 border-l-4 border-blue-500 pl-2">綜合能力評估</h3>
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-blue-50 p-3 rounded-lg text-center">
-                        <p id="ui-dim-1" class="text-xs text-gray-500 mb-1">財務安全</p>
-                        <p id="score-finance" class="font-bold text-blue-700">--</p>
+                <h3 id="ui-analysis-title" class="font-bold text-lg mb-3 text-gray-800 border-l-4 border-indigo-500 pl-2">您的財務行為特徵</h3>
+                
+                <div id="fail-alert" class="hidden bg-red-50 text-red-700 p-3 rounded-lg text-sm font-bold mb-4 border border-red-200">
+                    <!-- Injected if bankrupt or stressed -->
+                </div>
+
+                <div class="bg-indigo-50 p-4 rounded-xl mb-6 border border-indigo-100">
+                    <p id="archetype-name" class="text-xl font-black text-indigo-800 text-center mb-4 pb-2 border-b border-indigo-200"></p>
+                    
+                    <div class="mb-3">
+                        <p class="text-sm font-bold text-green-700 mb-1" id="ui-str">✅ 優勢 (Strength)</p>
+                        <p id="archetype-strength" class="text-sm text-gray-700 leading-relaxed"></p>
                     </div>
-                    <div class="bg-green-50 p-3 rounded-lg text-center">
-                        <p id="ui-dim-2" class="text-xs text-gray-500 mb-1">身心健康</p>
-                        <p id="score-wellbeing" class="font-bold text-green-700">--</p>
+                    <div class="mb-3">
+                        <p class="text-sm font-bold text-red-600 mb-1" id="ui-blk">⚠️ 行為盲點 (Blind Spot)</p>
+                        <p id="archetype-blind" class="text-sm text-gray-700 leading-relaxed"></p>
                     </div>
-                    <div class="bg-purple-50 p-3 rounded-lg text-center">
-                        <p id="ui-dim-3" class="text-xs text-gray-500 mb-1">責任感</p>
-                        <p id="score-responsibility" class="font-bold text-purple-700">--</p>
-                    </div>
-                    <div class="bg-orange-50 p-3 rounded-lg text-center">
-                        <p id="ui-dim-4" class="text-xs text-gray-500 mb-1">應變能力</p>
-                        <p id="score-flexibility" class="font-bold text-orange-700">--</p>
+                    <div>
+                        <p class="text-sm font-bold text-blue-700 mb-1" id="ui-rec">💡 專屬建議 (Recommendation)</p>
+                        <p id="archetype-rec" class="text-sm text-gray-700 leading-relaxed"></p>
                     </div>
                 </div>
 
-                <!-- Final Stats -->
                 <h3 id="ui-stats-title" class="font-bold text-lg mb-3 text-gray-800 border-l-4 border-blue-500 pl-2">最終數值</h3>
                 <div class="space-y-2 mb-6">
                     <div class="flex justify-between bg-gray-50 p-3 rounded-lg">
@@ -202,49 +197,40 @@
                     </div>
                 </div>
 
-                <!-- Analysis & Suggestions -->
-                <h3 id="ui-analysis-title" class="font-bold text-lg mb-3 text-gray-800 border-l-4 border-blue-500 pl-2">行為解析與建議</h3>
-                <p id="report-analysis" class="text-sm text-gray-700 leading-relaxed mb-4 bg-yellow-50 p-4 rounded-lg"></p>
-                
-                <!-- Reflection Questions -->
-                <div class="mt-6 border-t pt-4">
-                    <h3 id="ui-reflection-title" class="font-bold text-sm mb-2 text-gray-800">🤔 課後反思 (Reflection)</h3>
-                    <ul class="text-xs text-gray-600 list-decimal pl-4 space-y-1" id="reflection-list">
-                        <li id="ref1">在遊戲中，哪一個決定讓你感到最掙扎？</li>
-                        <li id="ref2">你認為自己更看重金錢、減壓，還是社交關係？</li>
-                        <li id="ref3">如果現實中遇到電腦壞掉，你目前的戶口能應付嗎？</li>
-                    </ul>
-                </div>
-
-                <!-- Watermark -->
-                <div class="mt-6 text-center text-xs text-gray-300 font-bold" id="report-watermark">
-                    大學生存指南：90日財務保衛戰
+                <div class="mt-4 text-center text-xs text-gray-300 font-bold" id="report-watermark">
+                    大學生存指南：財務行為測試
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="mt-6 space-y-3" data-html2canvas-ignore>
+                <a href="YOUR_POST_SURVEY_LINK_HERE" target="_blank" id="btn-post-form" class="w-full bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-600 transition text-center flex items-center justify-center text-lg animate-pulse">
+                    📝 第 3 步：填寫課後問卷 (Post-Survey)
+                </a>
+
                 <button onclick="downloadReport()" id="btn-download" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-indigo-700 transition flex items-center justify-center">
-                    📸 儲存診斷報告 (截圖)
+                    📸 儲存診斷報告 (截圖分享)
                 </button>
                 <button onclick="resetGame()" id="btn-restart" class="w-full bg-white text-gray-800 border-2 border-gray-200 font-bold py-3 rounded-xl hover:bg-gray-50 transition">
-                    🔄 重新開始遊戲
+                    🔄 重新測試
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Game State Variables (Decreased Init Budget for higher difficulty)
+        // Game State Variables
         const INIT_BUDGET = 4000;
         let budget = INIT_BUDGET;
         let emergencyFund = 0;
         let stress = 0;
         let currentStage = 0;
         let lang = 'zh'; 
-        
-        let choiceHistory = { A: 0, B: 0, C: 0 };
         let endReason = "completed"; 
+
+        // Behaviour Tracking (Axes)
+        let b_social = 0; // +: Social, -: Self/Academic
+        let b_future = 0; // +: Future, -: Present
+        let b_proact = 0; // +: Proactive, -: Passive
 
         function formatMoney(val) {
             return val < 0 ? `-HK$${Math.abs(val).toLocaleString()}` : `HK$${val.toLocaleString()}`;
@@ -254,113 +240,96 @@
         const i18n = {
             zh: {
                 langBtn: "中 / EN",
-                startTitle: "大學生存指南<br><span class='text-xl text-gray-500'>90日財務保衛戰</span>",
-                startIntroTitle: "📜 遊戲設定與規則",
-                startIntro1: "你即將開始 3 個月的大學生活。你的學費和宿舍租金已經繳清，目前手上擁有 <strong>HK$4,000</strong> 的「可支配餘額」。你必須用這筆錢應付飲食、交通、娛樂及突發事件。",
-                startIntro2: "除了金錢，你還要注意 <strong>心理壓力值 (0-100)</strong>。過度壓抑自己會導致壓力爆錶，而適當的娛樂能降低壓力。某些選擇能幫你累積「緊急儲備金」。",
-                startObjTitle: "🎯 學習目標 (Learning Objectives)",
-                obj1: "區分「想要 (Wants)」與「需要 (Needs)」",
-                obj2: "建立並保護「緊急儲備金 (Emergency Fund)」",
-                obj3: "認識借貸成本與債務壓力",
-                obj4: "在財務與身心健康中取得平衡",
-                startBtn: "開始挑戰",
-                uiBudget: "💰 預算剩餘:",
-                uiEmergency: "🏦 儲備金:",
-                uiStress: "🧠 壓力值:",
-                btnNextStage: "繼續下一階段",
-                btnForceEnd: "查看診斷報告",
-                warningBudgetTitle: "破產警告！",
-                warningBudgetDesc: "你過度使用了信用卡借貸，債務爆煲，無法繼續應付基本生活！",
-                warningStressTitle: "壓力爆錶！",
-                warningStressDesc: "過度的壓抑與焦慮讓你崩潰了，你需要立刻暫停一切休息！",
-                reportTitle: "診斷報告",
-                uiDimTitle: "綜合能力評估",
-                dim1: "財務安全", dim2: "身心健康", dim3: "責任感", dim4: "應變能力",
+                startTitle: "大學生存指南<br><span class='text-xl text-gray-500'>財務行為測試</span>",
+                startIntroTitle: "📜 測試設定與規則",
+                startIntro1: "歡迎來到大學！你的學費和租金已繳清，目前擁有 <strong>HK$4,000</strong> 的「可支配餘額」。你必須在 90 天內管理飲食、社交與突發事件。",
+                startIntro2: "遊戲將追蹤你的每一個選擇，並在最後生成你的專屬<strong>「財務行為特徵 (Financial Behaviour Profile)」</strong>。找出你的理財優勢與盲點！",
+                btnPreForm: "📋 第 1 步：填寫課前問卷 (Pre-Game Survey)",
+                startBtn: "第 2 步：開始挑戰 (Start Game)",
+                uiBudget: "💰 預算剩餘:", uiEmergency: "🏦 儲備金:", uiStress: "🧠 壓力值:",
+                modalBudget: "預算", modalEmergency: "儲備", modalStress: "壓力",
+                optLabel: "選項",
+                btnNextStage: "繼續下一階段", btnForceEnd: "查看行為診斷報告",
+                warningBudgetTitle: "破產警告！", warningBudgetDesc: "你過度使用了借貸或消費，債務爆煲，無法繼續應付基本生活！",
+                warningStressTitle: "壓力爆錶！", warningStressDesc: "過度的壓抑讓你崩潰了，你需要立刻暫停一切休息！",
+                reportTitle: "行為診斷報告",
+                uiAnalysisTitle: "您的財務行為特徵",
+                uiStr: "✅ 財務優勢 (Strength)", uiBlk: "⚠️ 行為盲點 (Blind Spot)", uiRec: "💡 專屬建議 (Recommendation)",
+                failBankrupt: "🚨 突發破產：你未能順利完成學期，讓我們看看是什麼行為模式導致了資金枯竭。",
+                failStress: "🚨 壓力崩潰：你未能順利完成學期，讓我們看看是什麼行為模式導致了過度壓抑。",
                 uiStatsTitle: "最終數值",
                 uiFinalBudget: "最終預算剩餘", uiFinalEmergency: "緊急儲備金", uiFinalStress: "最終壓力值",
-                uiAnalysisTitle: "行為解析與建議",
                 uiPrinciple: "💡 理財法則 (Principle)",
-                uiReflection: "🤔 課後反思 (Reflection)",
-                ref1: "在遊戲中，哪一個決定讓你感到最掙扎？",
-                ref2: "你認為自己更看重金錢、減壓，還是社交關係？",
-                ref3: "如果現實中遇到電腦壞掉，你目前的戶口能應付嗎？",
-                btnDownload: "📸 儲存診斷報告 (截圖)",
-                btnRestart: "🔄 重新開始遊戲",
-                watermark: "大學生存指南：90日財務保衛戰",
-                scoreHigh: "極佳", scoreMed: "普通", scoreLow: "危險", scoreDebt: "負債",
+                btnPostForm: "📝 第 3 步：填寫課後問卷 (Post-Survey)",
+                btnDownload: "📸 儲存診斷報告 (截圖分享)", btnRestart: "🔄 重新測試",
+                watermark: "大學生存指南：財務行為測試",
                 alertCrisis: "🚨 突發危機警告！\n\n平靜的日子結束了，你即將面臨巨大的考驗..."
             },
             en: {
                 langBtn: "EN / 中",
-                startTitle: "Uni Survival Guide<br><span class='text-xl text-gray-500'>90-Day Financial Defense</span>",
-                startIntroTitle: "📜 Game Rules & Setting",
-                startIntro1: "You are starting a 3-month semester. Rent and tuition are paid. You have a <strong>HK$4,000</strong> discretionary budget to manage food, transport, entertainment, and emergencies.",
-                startIntro2: "You must also manage your <strong>Mental Stress (0-100)</strong>. Extreme deprivation leads to a breakdown. Smart choices will help you build an 'Emergency Fund'.",
-                startObjTitle: "🎯 Learning Objectives",
-                obj1: "Distinguish 'Wants' from 'Needs'",
-                obj2: "Build and protect an Emergency Fund",
-                obj3: "Recognize the cost of debt and borrowing",
-                obj4: "Balance financial and mental wellbeing",
-                startBtn: "Start Challenge",
-                uiBudget: "💰 Budget:",
-                uiEmergency: "🏦 Emergency Fund:",
-                uiStress: "🧠 Stress Level:",
-                btnNextStage: "Continue to Next Stage",
-                btnForceEnd: "View Diagnostic Report",
-                warningBudgetTitle: "Bankrupt!",
-                warningBudgetDesc: "You overused your credit cards and the debt has crushed your ability to survive!",
-                warningStressTitle: "Stress Breakdown!",
-                warningStressDesc: "Extreme deprivation caused a mental breakdown. You need immediate rest!",
-                reportTitle: "Diagnostic Report",
-                uiDimTitle: "Comprehensive Assessment",
-                dim1: "Financial Security", dim2: "Wellbeing", dim3: "Responsibility", dim4: "Flexibility",
+                startTitle: "Uni Survival Guide<br><span class='text-xl text-gray-500'>Behaviour Profile</span>",
+                startIntroTitle: "📜 Rules & Setting",
+                startIntro1: "Welcome to university. Rent/tuition are paid. You have a <strong>HK$4,000</strong> budget to manage food, social life, and emergencies for 90 days.",
+                startIntro2: "Every choice is tracked. At the end, you'll receive your personalized <strong>Financial Behaviour Profile</strong> detailing your strengths and blind spots.",
+                btnPreForm: "📋 Step 1: Pre-Game Survey",
+                startBtn: "Step 2: Start Game",
+                uiBudget: "💰 Budget:", uiEmergency: "🏦 E-Fund:", uiStress: "🧠 Stress:",
+                modalBudget: "Budget", modalEmergency: "Reserve", modalStress: "Stress",
+                optLabel: "Option",
+                btnNextStage: "Continue to Next Stage", btnForceEnd: "View Behaviour Profile",
+                warningBudgetTitle: "Bankrupt!", warningBudgetDesc: "You over-relied on debt/spending and ran out of money!",
+                warningStressTitle: "Stress Breakdown!", warningStressDesc: "Extreme deprivation caused a mental breakdown!",
+                reportTitle: "Behaviour Profile",
+                uiAnalysisTitle: "Your Financial Archetype",
+                uiStr: "✅ Strength", uiBlk: "⚠️ Blind Spot", uiRec: "💡 Recommendation",
+                failBankrupt: "🚨 BANKRUPT: You didn't survive the term. Let's analyze the behavioural patterns that drained your funds.",
+                failStress: "🚨 BREAKDOWN: You didn't survive the term. Let's analyze the behavioural patterns that caused this extreme stress.",
                 uiStatsTitle: "Final Stats",
                 uiFinalBudget: "Final Budget", uiFinalEmergency: "Emergency Fund", uiFinalStress: "Final Stress",
-                uiAnalysisTitle: "Analysis & Suggestions",
                 uiPrinciple: "💡 Financial Principle",
-                uiReflection: "🤔 Reflection Questions",
-                ref1: "Which decision was the hardest for you to make?",
-                ref2: "Did you prioritize money, stress reduction, or social life?",
-                ref3: "If your laptop broke today, could your real bank account handle it?",
-                btnDownload: "📸 Save Report (Screenshot)",
-                btnRestart: "🔄 Play Again",
-                watermark: "Uni Survival Guide: 90-Day Financial Defense",
-                scoreHigh: "Excellent", scoreMed: "Average", scoreLow: "At Risk", scoreDebt: "In Debt",
+                btnPostForm: "📝 Step 3: Post-Game Survey",
+                btnDownload: "📸 Save Profile (Screenshot)", btnRestart: "🔄 Play Again",
+                watermark: "Uni Survival Guide: Behaviour Profile",
                 alertCrisis: "🚨 CRISIS WARNING!\n\nThe peaceful days are over. Prepare for a major emergency..."
             }
         };
 
-        // Game Data with Increased Option A costs
+        // Archetypes Dictionary (8 Combinations) - Updated to address "Over-concentration"
+        const archetypes = {
+            zh: {
+                "S_F_R": { name: "全方位策略家 (The Balanced Strategist)", str: "你在維持廣大社交圈的同時，也能精準地為未來做準備，擅長主動尋找高性價比的替代方案。", blk: "過度計算每個選擇的「性價比」，有時會讓你或身邊的朋友感到疲憊。", rec: "繼續保持！但不要將所有預算過度集中在社交，偶爾允許自己有一筆專屬於個人學業或興趣的小額開支，能讓理財更有彈性。" },
+                "S_F_A": { name: "謹慎社交者 (The Cautious Socialite)", str: "你看重人際關係，同時具有風險意識，不會輕易透支未來。", blk: "你比較被動，傾向依賴現有的高消費社交選項，較少主動去尋找折扣，容易產生隱形花費。", rec: "嘗試在群體中拿回「定價權」。下次聚會時，主動提議較低成本但同樣有趣的活動（如行山、Board Game），不要將預算全部消耗在昂貴飯局上。" },
+                "S_P_R": { name: "體驗探索家 (The Experience Seeker)", str: "你熱愛當下的社交體驗，並且會主動尋找各種方法（折扣、優惠）來最大化你與朋友的娛樂享受。", blk: "你為了當下的快樂與社交圈耗盡了預算，導致你的消費過度單一化，缺乏對個人突發危機的防禦能力。", rec: "為自己設立一個「強制儲蓄」規則。將每個月打工或省下錢的 20% 自動轉入不可觸碰的應急戶口，避免社交開支佔據 100% 的預算。" },
+                "S_P_A": { name: "隨性享樂派 (The YOLO Spender)", str: "你非常合群，極度重視當下的感受與朋友間的連結，能輕鬆享受大學生活。", blk: "受「錯失恐懼 (FOMO)」影響，你習慣被動接受昂貴的社交與便利服務，消費幾乎全部集中在吃喝玩樂，極易陷入破產。", rec: "小心「社交通脹」。你需要學會對超出預算的活動說「不」，並將部分預算強制轉移至自我提升或儲備金上。" },
+                "I_F_R": { name: "效率精算師 (The Ambitious Optimizer)", str: "你極度專注於個人學業與長期目標，並能主動利用科技或工具來達成最高效率。", blk: "消費過度集中在「學業/生產力」上，以「投資自己」為藉口的生活方式膨脹，反而耗盡了現金流且忽視了人際網絡。", rec: "學會區分「想要」與「需要」。在購買昂貴學習工具前先用免費替代品，並強制定出 10% 預算用於維持基本的大學社交網絡。" },
+                "I_F_A": { name: "極限生存者 (The Extreme Survivor)", str: "你具備極強的忍耐力，能為了未來的學業與安全感，主動拒絕一切外界誘惑。", blk: "嚴重的匱乏心態。你將所有預算鎖死，被動地犧牲健康、時間與社交來換取極致的省錢，容易導致心理崩潰。", rec: "理財是為了生活，不是為了受苦。不要把預算過度集中在「零消費」上，把「適度娛樂」和「建立人脈」列入你的必要預算中。" },
+                "I_P_R": { name: "捷徑投資客 (The Productivity Hacker)", str: "你行動力強，願意為了解決當下的個人不適或學業壓力，主動尋找並支付捷徑。", blk: "你用金錢購買當下的舒適（如狂飲貴價咖啡、飛的），導致消費過度集中在「便利溢價」上，掏空了你的錢包。", rec: "留意「依賴性消費」。嘗試用免費的健康習慣（如早睡、運動）來取代需要持續花錢的化學提神或交通捷徑。" },
+                "I_P_A": { name: "焦慮逃避者 (The Anxious Avoider)", str: "在壓力較小時，你能保持獨立自主，不隨波逐流，專注於自己的小世界。", blk: "面對壓力與困難時，你傾向選擇被動逃避，消費模式缺乏規劃，放棄了對財務和學業的控制權。", rec: "不要用「擺爛」來應對危機。及早規劃預算分配，將資金平均投放於個人儲備與有意義的社交活動，主動掌控大學生活。" }
+            },
+            en: {
+                "S_F_R": { name: "The Balanced Strategist", str: "You maintain a strong social network while preparing for the future. You proactively find smart, cost-effective alternatives.", blk: "Over-calculating the 'ROI' of every choice might sometimes exhaust you or your friends.", rec: "Keep it up! But don't over-concentrate your budget purely on social events. Ensure you allocate a small personal budget for your own academic or hobby interests." },
+                "S_F_A": { name: "The Cautious Socialite", str: "You value relationships and have good risk awareness, preventing you from recklessly spending future money.", blk: "You are passive. By relying on high-cost social norms and not proactively seeking discounts, you suffer from hidden financial leaks.", rec: "Take charge of 'social pricing'. Propose low-cost, high-fun activities (like hiking or board games) instead of pouring your entire budget into expensive dinners." },
+                "S_P_R": { name: "The Experience Seeker", str: "You love enjoying the present with peers and actively hack your way (coupons, deals) to maximize entertainment.", blk: "You prioritize current social experiences so much that your spending is dangerously concentrated, neglecting a long-term emergency defense.", rec: "Implement a 'Pay Yourself First' rule. Automatically transfer 20% of any income into an untouchable emergency account to balance out your social spending." },
+                "S_P_A": { name: "The YOLO Spender", str: "You are highly social, prioritizing current vibes and connections. You know how to enjoy university life.", blk: "Driven by FOMO, your spending is heavily concentrated on expensive social outings and convenience, leading to rapid debt.", rec: "Beware of 'Social Inflation'. Learn to say no to events beyond your budget, and forcefully diversify your spending into self-investment or savings." },
+                "I_F_R": { name: "The Ambitious Optimizer", str: "You are highly focused on personal academics and actively leverage technology/tools to achieve maximum efficiency.", blk: "Your spending is over-concentrated on 'productivity'. Buying premium academic gear drains your cash flow and isolates you from peers.", rec: "Separate 'Wants' from 'Needs'. Use free alternatives before buying expensive study tools, and allocate at least 10% of your budget to maintain a basic social network." },
+                "I_F_A": { name: "The Extreme Survivor", str: "You have immense willpower. You can resist all temptations to protect your academic focus and future security.", blk: "Scarcity mindset. Your budget is over-concentrated on 'saving', passively sacrificing your health and network, risking total mental burnout.", rec: "Budgeting is not about suffering. Diversify your priorities. Treat basic nutrition, sleep, and occasional socializing as 'essential investments'." },
+                "I_P_R": { name: "The Productivity Hacker", str: "You take quick action to solve immediate personal or academic discomforts, actively paying for shortcuts to save time.", blk: "Your spending is heavily concentrated on 'convenience premiums' (expensive coffee, Ubers) to solve bad habits, draining your wallet.", rec: "Watch out for 'Dependency Spending'. Replace paid chemical energy (caffeine) or convenience with free healthy habits like proper sleep and exercise." },
+                "I_P_A": { name: "The Anxious Avoider", str: "When stress is low, you are independent and focus comfortably on your own world.", blk: "Under pressure, you choose passive avoidance. Your unmanaged spending surrenders control over both your finances and grades.", rec: "Stop using avoidance to handle crises. Proactively distribute your budget between an emergency fund and meaningful activities to regain control of your university life." }
+            }
+        };
+
+        // Game Data with 5 Options per Stage
         const gameData = [
             {
                 stageZh: "M1 月頭", stageEn: "M1 Start",
                 questionZh: "開學第一週，你需要準備上課的筆記工具。",
                 questionEn: "Week 1: You need study equipment and notes.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "花大錢買最新款 iPad Pro 和配件", textEn: "Buy the latest iPad Pro & accessories", 
-                        budget: -2500, emergency: 0, stress: -10, 
-                        principleZh: "生活方式膨脹 (Lifestyle Inflation)", principleEn: "Lifestyle Inflation",
-                        quoteZh: "「工欲善其事，必先利其器，當投資自己啦！」", quoteEn: "'An investment in myself!'",
-                        lessonZh: "盲目追求頂配設備，會在學期初就耗盡你大半的抗風險能力。", lessonEn: "Buying premium gear instantly drains your emergency safety net."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "咩都唔買，上堂靠死記同手抄同學筆記", textEn: "Buy nothing. Memorize and copy notes by hand.", 
-                        budget: 0, emergency: 0, stress: +20, 
-                        principleZh: "時間成本 (Time Cost)", principleEn: "Time Cost",
-                        quoteZh: "「一蚊都唔洗先係王道！手抄當溫書。」", quoteEn: "'Saving money is king! Copying notes is studying.'",
-                        lessonZh: "不健康的節儉會大幅浪費你的時間，並迅速累積學業壓力。", lessonEn: "Unhealthy frugality wastes time and rapidly increases academic stress."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "善用舊 Laptop，訂閱 Goodnotes / Notion 作數位筆記", textEn: "Use existing laptop & subscribe to Goodnotes/Notion", 
-                        budget: -100, emergency: 0, stress: -5, 
-                        principleZh: "成本效益 (Cost-Benefit Analysis)", principleEn: "Cost-Benefit Analysis",
-                        quoteZh: "「舊機一樣用到，善用平價 Software 仲有效率。」", quoteEn: "'Old hardware + smart software is the most efficient choice.'",
-                        lessonZh: "尋找平價替代品 (Substitute) 能在極低成本下達到相同的學習效果。", lessonEn: "Finding affordable substitutes achieves the same goal with minimal cost."
-                    }
+                    { type: 'A', textZh: "花大錢買最新款 iPad Pro 和配件", textEn: "Buy the latest iPad Pro & accessories", budget: -2500, emergency: 0, stress: -10, axes: {s: -1, f: -1, p: -1}, principleZh: "生活方式膨脹", principleEn: "Lifestyle Inflation", quoteZh: "「當投資自己啦！」", quoteEn: "'An investment in myself!'", lessonZh: "盲目追求頂配設備，會在學期初耗盡抗風險能力。", lessonEn: "Buying premium gear instantly drains your safety net." },
+                    { type: 'B', textZh: "咩都唔買，上堂靠死記同手抄", textEn: "Buy nothing. Memorize and copy notes by hand.", budget: 0, emergency: 0, stress: +20, axes: {s: -1, f: 1, p: -1}, principleZh: "時間成本", principleEn: "Time Cost", quoteZh: "「一蚊都唔洗先係王道！」", quoteEn: "'Saving money is king!'", lessonZh: "不健康的節儉會大幅浪費時間，並累積學業壓力。", lessonEn: "Unhealthy frugality wastes time and increases academic stress." },
+                    { type: 'C', textZh: "善用舊 Laptop，訂閱平價筆記軟體", textEn: "Use existing laptop & subscribe to a cheap app", budget: -100, emergency: 0, stress: -5, axes: {s: -1, f: 1, p: 1}, principleZh: "成本效益", principleEn: "Cost-Benefit Analysis", quoteZh: "「善用平價 Software 仲有效率。」", quoteEn: "'Smart software is the most efficient choice.'", lessonZh: "尋找平價替代品能在極低成本下達到相同學習效果。", lessonEn: "Finding affordable substitutes achieves the goal with minimal cost." },
+                    { type: 'D', textZh: "高價買師兄姐的高分二手精讀筆記", textEn: "Buy expensive summary notes from seniors", budget: -300, emergency: 0, stress: -10, axes: {s: 1, f: -1, p: 1}, principleZh: "捷徑消費", principleEn: "Shortcut Spending", quoteZh: "「有前人整理好，可以慳返溫書時間去玩。」", quoteEn: "'Saves me time so I can socialize more.'", lessonZh: "依賴金錢買捷徑，容易忽視個人的知識內化過程。", lessonEn: "Buying shortcuts bypasses the learning process." },
+                    { type: 'E', textZh: "同室友夾錢買 Cloud Drive 共同做筆記", textEn: "Split a Cloud Drive sub with roommates to co-write", budget: -50, emergency: 0, stress: -5, axes: {s: 1, f: 1, p: 1}, principleZh: "共享資源", principleEn: "Resource Sharing", quoteZh: "「大家一齊分工合作，平靚正！」", quoteEn: "'Co-working is cheap and efficient!'", lessonZh: "善用人際網絡分攤成本，是極佳的理財策略。", lessonEn: "Using your network to split costs is a superb strategy." }
                 ]
             },
             {
@@ -368,92 +337,35 @@
                 questionZh: "同學約你去食高檔韓燒及唱 K 破冰，每位 $500。",
                 questionEn: "Classmates invite you to a premium K-BBQ and Karaoke ($500/person).",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "去！大家都去，唔去好唔合群", textEn: "Go! I don't want to miss out.", 
-                        budget: -500, emergency: 0, stress: -15, 
-                        principleZh: "錯失恐懼症 (FOMO)", principleEn: "Fear Of Missing Out (FOMO)",
-                        quoteZh: "「啱啱開學，當識多幾個朋友啦！」", quoteEn: "'Just started the term, need to make friends!'",
-                        lessonZh: "為了維持合群而產生的「社交通脹」，是大學生預算透支的元兇。", lessonEn: "Social inflation to fit in is the main cause of student budget deficits."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "拒絕，自己匿喺宿房食方包捱肚餓", textEn: "Refuse, stay in dorm and eat plain bread.", 
-                        budget: 0, emergency: 0, stress: +15, 
-                        principleZh: "社交剝奪 (Social Deprivation)", principleEn: "Social Deprivation",
-                        quoteZh: "「出街食飯太貴，我都係做毒L算。」", quoteEn: "'Eating out is too expensive, I will isolate myself.'",
-                        lessonZh: "完全切斷社交會導致強烈孤獨感，長期下來容易引發報復性消費。", lessonEn: "Total social isolation hurts wellbeing and often leads to revenge spending later."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "主動提議去 SmartPLAY 訂場打波，再食 Saizeriya", textEn: "Suggest booking a sports court & eating at Saizeriya instead", 
-                        budget: -60, emergency: 0, stress: -10, 
-                        principleZh: "掌握社交定價權 (Social Pricing Power)", principleEn: "Social Pricing Power",
-                        quoteZh: "「其實大家只係想聚下，打波再食平嘢一樣開心！」", quoteEn: "'People just want to hang out. Cheap food + sports is fun!'",
-                        lessonZh: "高情商的理財不是拒絕社交，而是主動創造低成本、高互動的社交場景。", lessonEn: "Smart planning means proposing low-cost social alternatives instead of avoiding friends."
-                    }
+                    { type: 'A', textZh: "去！大家都去，唔去好唔合群", textEn: "Go! I don't want to miss out.", budget: -500, emergency: 0, stress: -15, axes: {s: 1, f: -1, p: -1}, principleZh: "錯失恐懼症", principleEn: "Fear Of Missing Out (FOMO)", quoteZh: "「當識多幾個朋友啦！」", quoteEn: "'Need to make friends!'", lessonZh: "為了維持合群而產生的「社交通脹」是透支元兇。", lessonEn: "Social inflation to fit in causes budget deficits." },
+                    { type: 'B', textZh: "拒絕，自己匿喺宿房食方包捱肚餓", textEn: "Refuse, stay in dorm and eat plain bread.", budget: 0, emergency: 0, stress: +15, axes: {s: -1, f: 1, p: -1}, principleZh: "社交剝奪", principleEn: "Social Deprivation", quoteZh: "「出街太貴，我都係做毒L算。」", quoteEn: "'Too expensive, I will isolate myself.'", lessonZh: "完全切斷社交會導致孤獨感，容易引發報復性消費。", lessonEn: "Total social isolation often leads to revenge spending later." },
+                    { type: 'C', textZh: "主動提議去 SmartPLAY 訂場打波食平民餐廳", textEn: "Suggest booking a sports court & eating cheap instead", budget: -60, emergency: 0, stress: -10, axes: {s: 1, f: 1, p: 1}, principleZh: "掌握定價權", principleEn: "Social Pricing Power", quoteZh: "「打波再食平嘢一樣開心！」", quoteEn: "'Cheap food + sports is fun!'", lessonZh: "理財不是拒絕社交，而是主動創造低成本互動場景。", lessonEn: "Smart planning means proposing low-cost social alternatives." },
+                    { type: 'D', textZh: "只去食韓燒，Skip唱K提早返去溫書", textEn: "Join K-BBQ but skip Karaoke to study early", budget: -350, emergency: 0, stress: +5, axes: {s: 0, f: 1, p: 0}, principleZh: "預算妥協", principleEn: "Budget Compromise", quoteZh: "「參與一半社交，留返少少錢同時間俾自己。」", quoteEn: "'Join half the event to save some money and time.'", lessonZh: "懂得在社交壓力下畫定界線，是保護預算的好開始。", lessonEn: "Setting boundaries under social pressure protects your budget." },
+                    { type: 'E', textZh: "主動喺 Hall 搞 Board Game Night 請大家食零食", textEn: "Host a Board Game Night with snacks in your Hall", budget: -100, emergency: 0, stress: -15, axes: {s: 1, f: 1, p: 1}, principleZh: "主場優勢", principleEn: "Home-field Advantage", quoteZh: "「買包薯片就可以大家玩一晚，抵玩！」", quoteEn: "'Snacks and board games are cheap and fun for everyone!'", lessonZh: "改變社交場地（如回到宿舍），能將昂貴開支轉換為平價娛樂。", lessonEn: "Changing the venue to a dorm turns expensive outings into cheap fun." }
                 ]
             },
             {
                 stageZh: "M1 月尾", stageEn: "M1 End",
                 questionZh: "遲起身，搭 MTR 一定會遲到，今天是計出席率的早堂。",
-                questionEn: "You woke up late. Taking the MTR guarantees you will be late for a strict class.",
+                questionEn: "You woke up late. Taking MTR guarantees you will be late for class.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "立刻 Call 附加費極高的 Uber 飛的趕回學校", textEn: "Call an expensive surge-pricing Uber to rush to campus.", 
-                        budget: -200, emergency: 0, stress: -5, 
-                        principleZh: "隱形成本 (Hidden Costs)", principleEn: "Hidden Costs of Bad Habits",
-                        quoteZh: "「扣分會爛 Grade！用錢買時間好合理！」", quoteEn: "'Losing marks is bad! Buying time with money is justified.'",
-                        lessonZh: "生活習慣不佳（如遲起床）往往會引發懲罰性的高額開支。", lessonEn: "Poor time management directly causes expensive 'penalty' spending."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "索性走堂唔返，留喺度瞓覺", textEn: "Skip the class entirely and sleep.", 
-                        budget: 0, emergency: 0, stress: +10, 
-                        principleZh: "不負責任的逃避 (Irresponsible Avoidance)", principleEn: "Irresponsible Avoidance",
-                        quoteZh: "「既然都遲，不如慳返程車錢。」", quoteEn: "'Since I am late anyway, might as well save the transport fee.'",
-                        lessonZh: "省錢不能以犧牲核心責任（學業）為代價，這會帶來長遠的損失。", lessonEn: "Saving money at the cost of your core responsibilities (grades) is a terrible trade-off."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "用 MTR 學生半價搭車，在車上 Email 教授道歉", textEn: "Use MTR student discount, accept being late, and email professor.", 
-                        budget: -5, emergency: 0, stress: +5, 
-                        principleZh: "接受沉沒成本 (Accepting Sunk Costs)", principleEn: "Accepting Sunk Costs",
-                        quoteZh: "「遲到當買個教訓，下次較多幾個鬧鐘。」", quoteEn: "'I will accept the penalty and set more alarms next time.'",
-                        lessonZh: "不要為了彌補一個錯誤（遲起）而引發另一個財務錯誤（搭貴車）。", lessonEn: "Don't fix a time-management mistake by making a financial mistake."
-                    }
+                    { type: 'A', textZh: "立刻 Call 附加費極高的 Uber 飛的", textEn: "Call an expensive Uber to rush to campus.", budget: -200, emergency: 0, stress: -5, axes: {s: -1, f: -1, p: -1}, principleZh: "隱形成本", principleEn: "Hidden Costs of Bad Habits", quoteZh: "「用錢買時間好合理！」", quoteEn: "'Buying time with money is justified.'", lessonZh: "生活習慣不佳（如遲起）往往會引發懲罰性的高額開支。", lessonEn: "Poor time management causes expensive 'penalty' spending." },
+                    { type: 'B', textZh: "索性走堂唔返，留喺度瞓覺", textEn: "Skip the class entirely and sleep.", budget: 0, emergency: 0, stress: +10, axes: {s: -1, f: -1, p: -1}, principleZh: "不負責任的逃避", principleEn: "Irresponsible Avoidance", quoteZh: "「既然都遲，不如慳返車錢。」", quoteEn: "'Might as well save the transport fee.'", lessonZh: "省錢不能以犧牲核心責任為代價，這會帶來長遠損失。", lessonEn: "Saving money at the cost of grades is a terrible trade-off." },
+                    { type: 'C', textZh: "用 MTR 學生半價搭車，Email 教授道歉", textEn: "Use MTR discount, accept being late, and email professor.", budget: -5, emergency: 0, stress: +5, axes: {s: -1, f: 1, p: 1}, principleZh: "接受沉沒成本", principleEn: "Accepting Sunk Costs", quoteZh: "「遲到當買個教訓。」", quoteEn: "'I will accept the penalty.'", lessonZh: "不要為了彌補一個錯誤而引發另一個財務錯誤。", lessonEn: "Don't fix a mistake by making a financial mistake." },
+                    { type: 'D', textZh: "呃朋友幫你代簽到，自己繼續瞓", textEn: "Ask a friend to fake your attendance and keep sleeping", budget: 0, emergency: 0, stress: +15, axes: {s: 1, f: -1, p: 1}, principleZh: "透支社交信用", principleEn: "Social Credit Overdraft", quoteZh: "「靠兄弟幫手頂住先！」", quoteEn: "'Rely on my bros to cover for me!'", lessonZh: "濫用社交關係來逃避個人責任，長遠會破壞你的人際網絡。", lessonEn: "Abusing friendships to avoid responsibility damages your network." },
+                    { type: 'E', textZh: "搭巴士遲大到，事後請同學飲咖啡抄筆記", textEn: "Take bus, arrive very late, treat a friend to coffee for notes", budget: -40, emergency: 0, stress: -5, axes: {s: 1, f: 1, p: 1}, principleZh: "人脈補救", principleEn: "Network Remediation", quoteZh: "「雖然遲咗，但用少少錢請客補救返學業。」", quoteEn: "'Treating a friend to get the notes is a fair trade.'", lessonZh: "善用小額社交預算來補救學業失誤，是一種有效的應變策略。", lessonEn: "Using a small social budget to recover academic loss is a smart pivot." }
                 ]
             },
             {
                 stageZh: "M2 月頭", stageEn: "M2 Start",
-                questionZh: "Mid-term 壓力極大，Steam 特價與手遊推出限定抽卡包。",
-                questionEn: "Mid-term stress is high. Steam has a massive sale and your mobile game has a limited gacha box.",
+                questionZh: "Mid-term 壓力大，Steam 特價與手遊推出限定抽卡包。",
+                questionEn: "Mid-term stress is high. Massive game sale & limited gacha box out.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "瘋狂課金做課長，買下多款特價大作減壓", textEn: "Whale heavily on games and gacha boxes to destress.", 
-                        budget: -800, emergency: 0, stress: -20, 
-                        principleZh: "錨定效應 (Anchoring Effect)", principleEn: "Anchoring Effect (Sales Trap)",
-                        quoteZh: "「半價真係超抵！錯過咗以後買唔返！」", quoteEn: "'Half price is a steal! I can't miss this deal!'",
-                        lessonZh: "商家的特價會誤導你以為賺了。記住：只要你花錢了，就是支出。", lessonEn: "Sales trick you into thinking you are saving. Spending is spending."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "強迫自己死溫書，拒絕所有娛樂", textEn: "Force yourself to study and refuse all entertainment.", 
-                        budget: 0, emergency: 0, stress: +25, 
-                        principleZh: "疲勞累積 (Burnout Accumulation)", principleEn: "Burnout Accumulation",
-                        quoteZh: "「一蚊都唔可以洗！我要做個守財奴！」", quoteEn: "'Not spending a single cent! Must study!'",
-                        lessonZh: "娛樂是必需品，完全沒有釋放壓力的理財計畫是無法長久維持的。", lessonEn: "Entertainment is a need. A budget with zero fun is unsustainable and leads to burnout."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "Patreon 課金訂閱好青年荼毒室聽哲學 Podcast 放鬆", textEn: "Subscribe to a cheap Patreon podcast to relax mindfully.", 
-                        budget: -50, emergency: 0, stress: -15, 
-                        principleZh: "延遲滿足與平替 (Delayed Gratification & Value)", principleEn: "Value-Based Spending",
-                        quoteZh: "「減壓唔一定要買大作，聽下高質 Podcast 一樣開心。」", quoteEn: "'High-quality cheap content is better than expensive impulse game buys.'",
-                        lessonZh: "學會用低成本、高質量的方式釋放壓力，取代衝動性的大額娛樂消費。", lessonEn: "Replace impulse large purchases with low-cost, high-value relaxation methods."
-                    }
+                    { type: 'A', textZh: "瘋狂課金做課長，買下特價大作減壓", textEn: "Whale heavily on games to destress.", budget: -800, emergency: 0, stress: -20, axes: {s: -1, f: -1, p: -1}, principleZh: "錨定效應", principleEn: "Anchoring Effect", quoteZh: "「半價真係超抵！」", quoteEn: "'Half price is a steal!'", lessonZh: "商家的特價會誤導你以為賺了。花錢了就是支出。", lessonEn: "Sales trick you into thinking you are saving." },
+                    { type: 'B', textZh: "強迫自己死溫書，拒絕所有娛樂", textEn: "Force yourself to study and refuse all entertainment.", budget: 0, emergency: 0, stress: +25, axes: {s: -1, f: 1, p: -1}, principleZh: "疲勞累積", principleEn: "Burnout Accumulation", quoteZh: "「一蚊都唔洗！我要做守財奴！」", quoteEn: "'Not spending a single cent!'", lessonZh: "完全沒有釋放壓力的理財計畫是無法長久維持的。", lessonEn: "A budget with zero fun leads to burnout." },
+                    { type: 'C', textZh: "課金訂閱平價 Podcast / 音樂放鬆", textEn: "Subscribe to a cheap podcast/music app to relax.", budget: -50, emergency: 0, stress: -15, axes: {s: -1, f: 1, p: 1}, principleZh: "延遲滿足與平替", principleEn: "Value-Based Spending", quoteZh: "「聽下高質 Podcast 一樣開心。」", quoteEn: "'High-quality cheap content is better.'", lessonZh: "學會用低成本、高質量的方式釋放壓力，取代衝動消費。", lessonEn: "Replace impulse large purchases with low-cost relaxation." },
+                    { type: 'D', textZh: "跟朋友去蘭桂坊飲酒狂歡發洩壓力", textEn: "Go clubbing/drinking with friends to vent stress.", budget: -600, emergency: 0, stress: -20, axes: {s: 1, f: -1, p: -1}, principleZh: "情緒化消費", principleEn: "Emotional Spending", quoteZh: "「考完試緊係要同班 Friend 飲到盡啦！」", quoteEn: "'Must drink with friends to celebrate/vent!'", lessonZh: "將高壓與高消費社交綁定，會讓你的財務狀況大起大落。", lessonEn: "Tying high stress to high-cost socializing causes financial rollercoaster." },
+                    { type: 'E', textZh: "買一隻平價 Multi-player 遊戲同室友一齊玩", textEn: "Buy a cheap multi-player game to play with roommates.", budget: -150, emergency: 0, stress: -20, axes: {s: 1, f: 1, p: 1}, principleZh: "社交槓桿", principleEn: "Social Leverage", quoteZh: "「買隻 Game 幾個人一齊玩，除開好抵！」", quoteEn: "'A co-op game splits the joy and is highly worth it.'", lessonZh: "投資在能與多人共享的娛樂上，能以較低成本獲得雙倍快樂。", lessonEn: "Investing in shared entertainment yields double joy for less." }
                 ]
             },
             {
@@ -461,177 +373,71 @@
                 questionZh: "為趕 Group Project 通宵，半夜覺得非常肚餓。",
                 questionEn: "Pulling an all-nighter for a Group Project. You are extremely hungry.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "叫 Foodpanda 附加費極高的宵夜外賣送上門", textEn: "Order expensive premium food delivery with late-night surcharges.", 
-                        budget: -250, emergency: 0, stress: -10, 
-                        principleZh: "便利溢價 (Convenience Premium)", principleEn: "Convenience Premium",
-                        quoteZh: "「咁辛苦，食餐好慰勞自己啦！」", quoteEn: "'Working hard, I deserve a good premium meal!'",
-                        lessonZh: "外賣平台包含大量隱藏溢價，頻繁使用會迅速侵蝕預算。", lessonEn: "Delivery apps include high markup fees. Frequent use destroys budgets quickly."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "捱餓死頂，結果胃痛無法集中", textEn: "Starve to save money, resulting in stomach pain.", 
-                        budget: 0, emergency: 0, stress: +20, 
-                        principleZh: "健康債務 (Health Debt)", principleEn: "Health Debt",
-                        quoteZh: "「忍一晚就過，當減肥！」", quoteEn: "'Just endure one night. Treat it as a diet!'",
-                        lessonZh: "犧牲基本生理需求來省錢，最終會降低工作效率甚至產生醫療開支。", lessonEn: "Sacrificing basic physical needs ruins productivity and can cause medical bills later."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "落街買 KFC，用 App 優惠券並走塑走冰", textEn: "Walk to buy fast food using App coupons.", 
-                        budget: -40, emergency: 0, stress: -5, 
-                        principleZh: "善用折扣系統 (Utilizing Discount Systems)", principleEn: "Utilizing Discount Systems",
-                        quoteZh: "「行多兩步路，用 Coupon 平好多，順便伸展下。」", quoteEn: "'Walking saves the delivery fee, and coupons save even more.'",
-                        lessonZh: "日常消費中隱藏著很多折扣，花一分鐘找優惠積少成多。", lessonEn: "Taking 1 minute to find a coupon or walk saves the high convenience markup."
-                    }
+                    { type: 'A', textZh: "叫 Foodpanda 附加費極高的宵夜外賣", textEn: "Order premium food delivery with late-night surcharges.", budget: -250, emergency: 0, stress: -10, axes: {s: -1, f: -1, p: -1}, principleZh: "便利溢價", principleEn: "Convenience Premium", quoteZh: "「咁辛苦，慰勞自己啦！」", quoteEn: "'Working hard, I deserve a premium meal!'", lessonZh: "外賣平台包含大量隱藏溢價，頻繁使用會迅速侵蝕預算。", lessonEn: "Delivery apps include high markup fees." },
+                    { type: 'B', textZh: "捱餓死頂，結果胃痛無法集中", textEn: "Starve to save money, resulting in stomach pain.", budget: 0, emergency: 0, stress: +20, axes: {s: -1, f: 1, p: -1}, principleZh: "健康債務", principleEn: "Health Debt", quoteZh: "「忍一晚就過！」", quoteEn: "'Just endure one night!'", lessonZh: "犧牲基本生理需求，最終會降低效率甚至產生醫療開支。", lessonEn: "Sacrificing basic physical needs ruins productivity." },
+                    { type: 'C', textZh: "落街買 KFC，用 App 優惠券並走塑", textEn: "Walk to buy fast food using App coupons.", budget: -40, emergency: 0, stress: -5, axes: {s: -1, f: 1, p: 1}, principleZh: "善用折扣", principleEn: "Utilizing Discounts", quoteZh: "「用 Coupon 平好多，順便伸展下。」", quoteEn: "'Coupons save money, walking is good.'", lessonZh: "花一分鐘找優惠或自己走動，能省下高昂的便利溢價。", lessonEn: "Taking 1 minute to find a coupon saves the markup." },
+                    { type: 'D', textZh: "豪氣請全組人食貴價糖水外賣提神", textEn: "Treat the whole project group to expensive desserts.", budget: -350, emergency: 0, stress: -15, axes: {s: 1, f: -1, p: 1}, principleZh: "過度慷慨", principleEn: "Over-generosity", quoteZh: "「當俾大家打氣啦，錢無咗再算！」", quoteEn: "'Cheering everyone up, worry about money later!'", lessonZh: "用自己的生活費來承擔整個群體的開銷，是不健康的財務界線。", lessonEn: "Funding the whole group with your survival budget is poor boundary setting." },
+                    { type: 'E', textZh: "用 Pantry 資源煮麵，加幾隻蛋全組Share", textEn: "Cook instant noodles with eggs in pantry for the group.", budget: -60, emergency: 0, stress: -10, axes: {s: 1, f: 1, p: 1}, principleZh: "動手能力", principleEn: "DIY Economics", quoteZh: "「自己煮又平又暖胃，成組人一齊食好有 Feel。」", quoteEn: "'Cooking is cheap, warm, and builds team spirit.'", lessonZh: "自己動手 (DIY) 是打破便利溢價並同時增進人際關係的最佳方式。", lessonEn: "DIY breaks convenience markup and builds relationships." }
                 ]
             },
             {
                 stageZh: "M2 月尾", stageEn: "M2 End",
-                questionZh: "收到月結單，發現多個 App 及串流平台自動扣除了一大筆錢。",
-                questionEn: "Credit card bill arrives: Multiple apps and streaming services auto-renewed.",
+                questionZh: "發現多個 App 及串流平台自動扣除了一大筆錢。",
+                questionEn: "Multiple apps and streaming services auto-renewed.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "覺得麻煩，由得所有的年費繼續自動扣款", textEn: "Too lazy to manage, let all expensive annual fees auto-renew.", 
-                        budget: -350, emergency: 0, stress: 0, 
-                        principleZh: "拿鐵因子 (Latte Factor)", principleEn: "Subscription Leakage (Latte Factor)",
-                        quoteZh: "「每個月幾十蚊啫，費事逐個去 Cut。」", quoteEn: "'It's just a few dollars a month. Too much hassle to cancel.'",
-                        lessonZh: "不起眼的自動扣款是無形殺手，沒有 Audit 習慣會造成資金持續流失。", lessonEn: "Small automatic subscriptions leak money invisibly over time."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "一怒之下 Cut 走所有服務，連 Cloud Backup 都無埋", textEn: "Rage-cancel everything, including essential cloud backups.", 
-                        budget: 0, emergency: 0, stress: +15, 
-                        principleZh: "過度反應的風險 (Risk of Over-reaction)", principleEn: "Risk of Over-reaction",
-                        quoteZh: "「全部 Cut 晒！一蚊都唔俾班吸血鬼賺！」", quoteEn: "'Cancel them all! Not giving them a single cent!'",
-                        lessonZh: "取消了必需的生產力工具（如 Backup），反而增加了遺失資料的巨大風險。", lessonEn: "Canceling essential productivity tools (like backups) exposes you to massive data-loss risks."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "花 15 分鐘 Audit，只保留 Surfshark VPN 與朋友夾 Family Plan", textEn: "Audit subscriptions: Keep essentials and share Family Plans.", 
-                        budget: -60, emergency: 0, stress: -5, 
-                        principleZh: "共享經濟 (Sharing Economy)", principleEn: "Sharing Economy & Auditing",
-                        quoteZh: "「定期執下 Subscription 係常識，同朋友夾 Plan 最抵。」", quoteEn: "'Auditing subscriptions is common sense. Sharing a family plan is smart.'",
-                        lessonZh: "揪出並優化固定開支，利用團體優勢攤薄成本，是防止財富流失的關鍵。", lessonEn: "Auditing fixed costs and sharing expenses reduces financial leakage effectively."
-                    }
+                    { type: 'A', textZh: "覺得麻煩，由得所有年費繼續自動扣款", textEn: "Too lazy to manage, let all fees auto-renew.", budget: -350, emergency: 0, stress: 0, axes: {s: -1, f: -1, p: -1}, principleZh: "拿鐵因子", principleEn: "Subscription Leakage", quoteZh: "「費事逐個去 Cut。」", quoteEn: "'Too much hassle to cancel.'", lessonZh: "不起眼的自動扣款是無形殺手，缺乏 Audit 會造成資金流失。", lessonEn: "Small automatic subscriptions leak money invisibly." },
+                    { type: 'B', textZh: "一怒之下 Cut 走所有服務，連 Backup 都無埋", textEn: "Rage-cancel everything, including cloud backups.", budget: 0, emergency: 0, stress: +15, axes: {s: -1, f: -1, p: -1}, principleZh: "過度反應", principleEn: "Risk of Over-reaction", quoteZh: "「一蚊都唔俾班吸血鬼賺！」", quoteEn: "'Cancel them all!'", lessonZh: "取消了必需的生產力工具，反而增加了巨大的風險。", lessonEn: "Canceling essential tools exposes you to massive risks." },
+                    { type: 'C', textZh: "花時間 Audit，保留必須並與朋友夾 Family Plan", textEn: "Audit: Keep essentials and share Family Plans.", budget: -60, emergency: 0, stress: -5, axes: {s: 1, f: 1, p: 1}, principleZh: "共享經濟", principleEn: "Sharing Economy", quoteZh: "「同朋友夾 Plan 最抵。」", quoteEn: "'Sharing a family plan is smart.'", lessonZh: "優化固定開支並利用團體優勢攤薄成本，是理財關鍵。", lessonEn: "Auditing fixed costs and sharing expenses reduces leakage." },
+                    { type: 'D', textZh: "只保留 Netflix 等娛樂，Cut 走溫書用生產力工具", textEn: "Keep Netflix, but cancel productivity/study apps.", budget: -150, emergency: 0, stress: +5, axes: {s: -1, f: -1, p: 1}, principleZh: "短視取捨", principleEn: "Short-sighted Trade-off", quoteZh: "「娛樂唔少得，溫書軟件可以借人用。」", quoteEn: "'Entertainment is a must, I can borrow study tools.'", lessonZh: "優先保留娛樂而削減核心生產力，會長遠影響你的學業競爭力。", lessonEn: "Cutting core productivity to keep entertainment hurts long-term goals." },
+                    { type: 'E', textZh: "保留生產力工具，主動叫朋友 Share 娛樂帳號俾你", textEn: "Keep study apps, ask friends to share their Netflix with you.", budget: -150, emergency: 0, stress: -5, axes: {s: 1, f: 1, p: 1}, principleZh: "資源整合", principleEn: "Resource Consolidation", quoteZh: "「溫書工具自己買，睇戲就痴朋友 Account！」", quoteEn: "'Pay for study tools, piggyback on friends for movies!'", lessonZh: "分清輕重緩急，學會在非核心領域善用他人的閒置資源。", lessonEn: "Prioritize core needs and leverage others' idle resources for wants." }
                 ]
             },
             {
                 stageZh: "M3 月頭", stageEn: "M3 Start",
-                questionZh: "準備 Final Exam，發現筆記好亂，需要大量溫習資源。",
-                questionEn: "Preparing for Finals. Your notes are a mess and you need study resources.",
+                questionZh: "準備 Final Exam，需要大量溫習資源。",
+                questionEn: "Preparing for Finals. You need study resources.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "花大錢報名補習班並買下所有「天價精讀筆記」", textEn: "Pay for expensive crash courses and 'perfect summary notes'.", 
-                        budget: -500, emergency: 0, stress: -10, 
-                        principleZh: "捷徑思維 (Shortcut Thinking)", principleEn: "Shortcut Thinking",
-                        quoteZh: "「用錢解決到嘅問題就唔係問題，買個安心。」", quoteEn: "'Money can solve this. Buying peace of mind.'",
-                        lessonZh: "依賴金錢買捷徑，往往忽略了親自整理資料也是學習吸收的過程。", lessonEn: "Relying on money to buy shortcuts bypasses the actual learning process."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "自己死背，花大量時間做無效率的抄寫", textEn: "Rote memorize and spend hours doing inefficient manual copying.", 
-                        budget: 0, emergency: 0, stress: +15, 
-                        principleZh: "低效勞動 (Inefficient Labor)", principleEn: "Inefficient Labor",
-                        quoteZh: "「慢慢抄當溫書，總好過俾錢人賺。」", quoteEn: "'Copying slowly is better than paying someone.'",
-                        lessonZh: "拒絕任何工具輔助，只會讓你在高壓期耗盡寶貴的時間資源。", lessonEn: "Refusing to use tools drains your most valuable resource during exams: time."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "善用 Memo / AI 工具，自己將 Notes 轉化為 Flashcards", textEn: "Use free AI tools to convert notes into efficient Flashcards.", 
-                        budget: 0, emergency: 0, stress: -5, 
-                        principleZh: "科技槓桿 (Technological Leverage)", principleEn: "Technological Leverage",
-                        quoteZh: "「善用 AI 工具幫自己高效整理，慳錢又入腦。」", quoteEn: "'Using AI tools helps organize efficiently. Saves money and improves memory.'",
-                        lessonZh: "善用科技工具（Leverage）可以同時省下金錢與時間，提升競爭力。", lessonEn: "Leveraging technology saves both time and money while improving outcomes."
-                    }
+                    { type: 'A', textZh: "花大錢買下所有「天價精讀筆記」", textEn: "Pay for expensive 'perfect summary notes'.", budget: -500, emergency: 0, stress: -10, axes: {s: -1, f: -1, p: -1}, principleZh: "捷徑思維", principleEn: "Shortcut Thinking", quoteZh: "「用錢解決問題，買個安心。」", quoteEn: "'Money buys peace of mind.'", lessonZh: "依賴金錢買捷徑，往往忽略了親自整理也是吸收的過程。", lessonEn: "Relying on money bypasses the actual learning process." },
+                    { type: 'B', textZh: "自己死背，花大量時間做無效率的抄寫", textEn: "Rote memorize and do inefficient manual copying.", budget: 0, emergency: 0, stress: +15, axes: {s: -1, f: 1, p: -1}, principleZh: "低效勞動", principleEn: "Inefficient Labor", quoteZh: "「慢慢抄總好過俾錢。」", quoteEn: "'Copying is better than paying.'", lessonZh: "拒絕工具輔助，只會讓你在高壓期耗盡寶貴的時間資源。", lessonEn: "Refusing to use tools drains your most valuable resource: time." },
+                    { type: 'C', textZh: "善用 AI 工具，自己將 Notes 轉為 Flashcards", textEn: "Use free AI tools to convert notes into Flashcards.", budget: 0, emergency: 0, stress: -5, axes: {s: -1, f: 1, p: 1}, principleZh: "科技槓桿", principleEn: "Technological Leverage", quoteZh: "「善用 AI 幫自己高效整理。」", quoteEn: "'AI helps organize efficiently.'", lessonZh: "善用科技工具可以同時省下金錢與時間，提升效率。", lessonEn: "Leveraging technology saves time and money." },
+                    { type: 'D', textZh: "報名昂貴的補習班，同班 Friend 一齊去上", textEn: "Pay for an expensive crash course with friends.", budget: -600, emergency: 0, stress: -15, axes: {s: 1, f: -1, p: -1}, principleZh: "群體焦慮", principleEn: "Group Anxiety Spending", quoteZh: "「大家都有補，我都唔可以執輸！」", quoteEn: "'Everyone is paying for it, I can't lose out!'", lessonZh: "被群體的焦慮牽著鼻子走，會產生極高額且未必有用的花費。", lessonEn: "Following group anxiety leads to high-cost, ineffective spending." },
+                    { type: 'E', textZh: "組建免費 Study Group，每人負責整理一課", textEn: "Form a free study group, divide chapters to summarize.", budget: 0, emergency: 0, stress: +5, axes: {s: 1, f: 1, p: 1}, principleZh: "協作經濟", principleEn: "Collaborative Economy", quoteZh: "「一人做少少，免費換齊全套精讀！」", quoteEn: "'Everyone does a bit, we get a full guide for free!'", lessonZh: "將個人的努力與他人交換，能實現資源的指數級擴張。", lessonEn: "Exchanging effort with peers exponentially increases resources." }
                 ]
             },
             {
                 stageZh: "M3 月中", stageEn: "M3 Mid",
-                questionZh: "預算見底，但學校/政府招募 Part-time 監考員，佔用一天溫書時間。",
-                questionEn: "Budget is low. A 1-day Part-time Exam Invigilator job is available, but costs study time.",
+                questionZh: "預算見底，但有 1 天的高薪兼職監考員空缺。",
+                questionEn: "Budget is low. A 1-day well-paid Invigilator job is available.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "向銀行借取高息循環貸款作生活費，不工作", textEn: "Take a high-interest fast cash loan for living expenses. Don't work.", 
-                        budget: 800, emergency: 0, stress: +20, 
-                        principleZh: "債務陷阱 (Debt Trap)", principleEn: "Debt Trap & Interest Rates",
-                        quoteZh: "「就快 Exam 無時間做 Part-time，借住少少頂住先啦。」", quoteEn: "'No time to work. Just borrow a little to survive.'",
-                        lessonZh: "習慣用未來的錢解決當下的缺口，是陷入高息信貸危機的第一步。", lessonEn: "Using future money (debt) to solve present deficits leads to credit crises."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "唔借錢亦唔做 Part-time，每日食白麵包捱過去", textEn: "Don't borrow, don't work. Eat plain bread every day to survive.", 
-                        budget: 0, emergency: 0, stress: +15, 
-                        principleZh: "匱乏心態 (Scarcity Mindset)", principleEn: "Scarcity Mindset",
-                        quoteZh: "「溫書最重要，死慳死抵捱到考完試就得。」", quoteEn: "'Exams are most important. I will just starve until it is over.'",
-                        lessonZh: "過度專注於缺錢會導致認知能力下降，反而嚴重影響考試表現。", lessonEn: "Hyper-focusing on extreme poverty reduces cognitive function and ruins exam performance."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "去做一日 Part-time 賺 $800，將 $500 存入儲備金", textEn: "Work the 1-day job (+HK$800). Put HK$500 into Emergency Fund.", 
-                        budget: 300, emergency: 500, stress: +5, 
-                        principleZh: "開源與專款專用 (Increase Income & E-Fund)", principleEn: "Increase Income & Protect Savings",
-                        quoteZh: "「辛苦一日賺外快，存起一筆做底氣，心安理得去考試！」", quoteEn: "'Work hard for a day, save an emergency fund, and study with peace of mind.'",
-                        lessonZh: "理財不能只靠節流。主動開源並強制將部分收入劃入「儲備金」，是最佳防禦。", lessonEn: "You cannot budget your way out of zero. Increasing income and saving is the best defense."
-                    }
+                    { type: 'A', textZh: "向 Mox Bank 借高息循環貸款，不工作", textEn: "Take a high-interest fast cash loan. Don't work.", budget: 800, emergency: 0, stress: +20, axes: {s: -1, f: -1, p: -1}, principleZh: "債務陷阱", principleEn: "Debt Trap", quoteZh: "「借住少少頂住先啦。」", quoteEn: "'Just borrow a little to survive.'", lessonZh: "習慣用未來的錢解決當下的缺口，是陷入信貸危機的第一步。", lessonEn: "Using debt to solve present deficits leads to credit crises." },
+                    { type: 'B', textZh: "唔借錢亦唔工作，每日食白麵包捱過去", textEn: "Don't borrow, don't work. Eat plain bread every day.", budget: 0, emergency: 0, stress: +15, axes: {s: -1, f: 1, p: -1}, principleZh: "匱乏心態", principleEn: "Scarcity Mindset", quoteZh: "「死慳死抵捱到考完試就得。」", quoteEn: "'I will just starve until it is over.'", lessonZh: "過度專注於缺錢會導致認知能力下降，嚴重影響考試表現。", lessonEn: "Hyper-focusing on extreme poverty ruins exam performance." },
+                    { type: 'C', textZh: "做 Part-time 賺 $800，將 $500 存入儲備金", textEn: "Work (+HK$800). Put HK$500 into E-Fund.", budget: 300, emergency: 500, stress: +5, axes: {s: -1, f: 1, p: 1}, principleZh: "專款專用", principleEn: "Protect Savings", quoteZh: "「存起一筆做底氣，心安理得！」", quoteEn: "'Save an emergency fund, have peace of mind.'", lessonZh: "主動開源並強制將部分收入劃入「儲備金」，是最佳防禦。", lessonEn: "Increasing income and saving is the best financial defense." },
+                    { type: 'D', textZh: "向好朋友借 $500 頂住先，之後再算", textEn: "Borrow $500 from a close friend, worry later.", budget: 500, emergency: 0, stress: +15, axes: {s: 1, f: -1, p: 1}, principleZh: "透支人情", principleEn: "Overdrawing Favors", quoteZh: "「靠兄弟江湖救急！」", quoteEn: "'Rely on my bros for an emergency rescue!'", lessonZh: "用人情來填補日常理財不善的漏洞，會損害長期信任關係。", lessonEn: "Using favors to cover bad budgeting damages trust." },
+                    { type: 'E', textZh: "做 Part-time 賺 $800，拎 $300 請朋友食飯道謝借筆記", textEn: "Work (+800), spend 300 treating friends for helping you study.", budget: 500, emergency: 0, stress: -5, axes: {s: 1, f: 1, p: 1}, principleZh: "人際投資", principleEn: "Relational Investment", quoteZh: "「賺到錢緊係要回饋返幫過我嘅朋友。」", quoteEn: "'Earned money to pay back those who helped me.'", lessonZh: "將賺來的錢適當回饋給支援你的網絡，能鞏固優質人脈。", lessonEn: "Reinvesting income into your support network solidifies it." }
                 ]
             },
             {
                 stageZh: "M3 月尾", stageEn: "M3 End",
-                questionZh: "連續通宵幾晚，你覺得極度疲倦，需要提神。",
+                questionZh: "連續通宵幾晚，極度疲倦，需要提神。",
                 questionEn: "Exhausted from all-nighters. You desperately need energy.",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "連續一星期每日買最貴的 Starbucks 咖啡加甜品", textEn: "Buy expensive Starbucks coffee and pastries every day for a week.", 
-                        budget: -300, emergency: 0, stress: -5, 
-                        principleZh: "依賴性消費 (Dependency Spending)", principleEn: "Dependency Spending",
-                        quoteZh: "「無咖啡真係頂唔順，呢筆錢唔慳得。」", quoteEn: "'I can't survive without coffee. Must spend this money.'",
-                        lessonZh: "用金錢購買短暫的化學提神，長期會形成高昂的依賴性開支。", lessonEn: "Buying chemical energy (caffeine) creates an expensive dependency."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "狂飲水喉水，結果在圖書館恰眼瞓浪費半日", textEn: "Drink tap water, fall asleep in the library, waste half a day.", 
-                        budget: 0, emergency: 0, stress: +10, 
-                        principleZh: "身心耗損 (Physical Depletion)", principleEn: "Physical Depletion",
-                        quoteZh: "「用意志力克服睡魔！我一定得！」", quoteEn: "'I will overcome sleep with willpower!'",
-                        lessonZh: "不顧身體極限的硬扛，最終會以時間或醫療費用的形式付出更大代價。", lessonEn: "Ignoring physical limits will cost you more in wasted time or future medical bills."
-                    },
-                    { 
-                        type: 'C',
-                        textZh: "買即溶咖啡，並抽半小時去樓下跑步出汗提神", textEn: "Buy cheap instant coffee and jog for 30 minutes to boost energy.", 
-                        budget: -30, emergency: 0, stress: -10, 
-                        principleZh: "健康資產 (Health as an Asset)", principleEn: "Health as an Asset",
-                        quoteZh: "「提神唔一定要靠貴咖啡，郁下個身流下汗仲清醒。」", quoteEn: "'Energy doesn't only come from expensive coffee. Exercise wakes the brain.'",
-                        lessonZh: "維持良好的生活與運動習慣，能幫你省下大筆非必要的提神與醫療開銷。", lessonEn: "Maintaining physical health saves money on artificial energy and medical bills."
-                    }
+                    { type: 'A', textZh: "每日買最貴的 Starbucks 咖啡加甜品", textEn: "Buy expensive Starbucks coffee and pastries every day.", budget: -300, emergency: 0, stress: -5, axes: {s: -1, f: -1, p: -1}, principleZh: "依賴性消費", principleEn: "Dependency Spending", quoteZh: "「無咖啡真係頂唔順。」", quoteEn: "'I can't survive without coffee.'", lessonZh: "用金錢購買化學提神，長期會形成高昂的依賴性開支。", lessonEn: "Buying chemical energy creates an expensive dependency." },
+                    { type: 'B', textZh: "狂飲水喉水，結果在圖書館恰眼瞓浪費半日", textEn: "Drink tap water, fall asleep in library, waste half a day.", budget: 0, emergency: 0, stress: +10, axes: {s: -1, f: 1, p: -1}, principleZh: "身心耗損", principleEn: "Physical Depletion", quoteZh: "「用意志力克服睡魔！」", quoteEn: "'I will overcome sleep with willpower!'", lessonZh: "不顧身體極限的硬扛，最終會以時間形式付出更大代價。", lessonEn: "Ignoring physical limits costs you more in wasted time." },
+                    { type: 'C', textZh: "買即溶咖啡，並抽半小時去跑步出汗提神", textEn: "Buy cheap instant coffee and jog for 30 mins to boost energy.", budget: -30, emergency: 0, stress: -10, axes: {s: -1, f: 1, p: 1}, principleZh: "健康資產", principleEn: "Health as an Asset", quoteZh: "「流下汗仲清醒。」", quoteEn: "'Exercise wakes the brain.'", lessonZh: "維持良好的生活習慣能省下大筆非必要的提神開銷。", lessonEn: "Maintaining physical health saves money on artificial energy." },
+                    { type: 'D', textZh: "買一大堆 Red Bull 派俾一齊溫書嘅同學", textEn: "Buy tons of Red Bull for you and your study buddies.", budget: -200, emergency: 0, stress: -10, axes: {s: 1, f: -1, p: 1}, principleZh: "無效社交消費", principleEn: "Ineffective Social Spending", quoteZh: "「大家一齊飲，一齊頂住！」", quoteEn: "'Drink together, endure together!'", lessonZh: "用消耗品來維繫群體奮鬥感，成本高且對健康無益。", lessonEn: "Using consumables to bond is expensive and unhealthy." },
+                    { type: 'E', textZh: "決定返宿舍瞓 4 個鐘，叫室友一定要叫醒你", textEn: "Nap for 4 hours, ask roommate to strictly wake you up.", budget: 0, emergency: 0, stress: -5, axes: {s: 1, f: 1, p: 1}, principleZh: "睡眠經濟", principleEn: "Sleep Economics", quoteZh: "「靠兄弟人工鬧鐘，好過飲死自己。」", quoteEn: "'A human alarm clock is better than caffeine overdose.'", lessonZh: "正確的休息加上同儕互相監督，是零成本的高效方案。", lessonEn: "Proper rest + peer accountability is a zero-cost solution." }
                 ]
             },
             {
                 stageZh: "突發危機", stageEn: "CRISIS!",
-                questionZh: "聽日就是佔全科 40% 的終極死線，但你的 MacBook 突然死機！維修中心表示必須立刻搶修資料，需要支付 HK$1,500！",
-                questionEn: "Tomorrow is a 40% project deadline. Your MacBook crashes! The emergency repair center demands HK$1,500 immediately to save your data!",
+                questionZh: "死線前夕 MacBook 突然死機！維修中心要求立刻支付 HK$1,500 搶修！",
+                questionEn: "MacBook crashes before deadline! Emergency repair center demands HK$1,500 immediately!",
                 options: [
-                    { 
-                        type: 'A',
-                        textZh: "立刻支付 HK$1,500 進行緊急搶修 (優先扣除儲備金)", textEn: "Pay HK$1,500 for emergency repair (Deducts from Emergency Fund first).", 
-                        budget: -1500, emergency: 0, stress: -10, 
-                        principleZh: "風險轉移 (Risk Transfer)", principleEn: "Emergency Preparedness",
-                        quoteZh: "「錢可以解決嘅危機就唔係危機，最緊要交到份功課！」", quoteEn: "'If money can solve the crisis, it's just an expense. Must submit the project!'",
-                        lessonZh: "這就是儲備金存在的意義：讓意外只是一筆花費，而不是一場災難。", lessonEn: "This is why emergency funds exist: turning a disaster into a mere inconvenience."
-                    },
-                    { 
-                        type: 'B',
-                        textZh: "無錢維修 / 不願維修，硬著頭皮用手機重做一份頹版", textEn: "Can't/Won't pay. Redo a terrible version on your phone.", 
-                        budget: 0, emergency: 0, stress: +50, 
-                        principleZh: "風險自留的代價 (Cost of Risk Retention)", principleEn: "Cost of Risk Retention",
-                        quoteZh: "「千五蚊太貴啦...我今晚唔瞓用手機打字算...」", quoteEn: "'$1,500 is too much... I won't sleep and type it on my phone...'",
-                        lessonZh: "沒有資金抵禦風險，只能用極度損耗身心與學業成績的方式來償還。", lessonEn: "Without financial protection, you pay for emergencies with your mental health and grades."
-                    }
+                    { type: 'A', textZh: "立刻支付 HK$1,500 搶修 (優先扣儲備金)", textEn: "Pay HK$1,500 (Deducts from E-Fund first).", budget: -1500, emergency: 0, stress: -10, axes: {s: -1, f: 1, p: 1}, principleZh: "風險轉移", principleEn: "Emergency Preparedness", quoteZh: "「最緊要交到份功課！」", quoteEn: "'Must submit the project!'", lessonZh: "這就是儲備金的意義：讓意外只是一筆花費，而不是災難。", lessonEn: "Emergency funds turn a disaster into a mere inconvenience." },
+                    { type: 'B', textZh: "不維修，硬著頭皮用手機重做一份頹版", textEn: "Won't pay. Redo a terrible version on your phone.", budget: 0, emergency: 0, stress: +50, axes: {s: -1, f: -1, p: -1}, principleZh: "風險自留的代價", principleEn: "Cost of Risk Retention", quoteZh: "「千五蚊太貴...我用手機打字算...」", quoteEn: "'Too much... I will type on my phone...'", lessonZh: "沒有資金抵禦風險，只能用極度損耗學業成績的方式來償還。", lessonEn: "Without financial protection, you pay with your grades." },
+                    { type: 'C', textZh: "問朋友借舊機頂住先，請食飯答謝", textEn: "Borrow an old laptop from a friend, treat them to a meal.", budget: -150, emergency: 0, stress: +15, axes: {s: 1, f: 1, p: 1}, principleZh: "人際護城河", principleEn: "Social Moat", quoteZh: "「好彩平時對啲 Friend 唔錯，肯借機救命！」", quoteEn: "'Lucky I have friends willing to save my life!'", lessonZh: "平日累積的良好人際關係，在危機時能成為巨大的緩衝墊。", lessonEn: "Good relationships act as a massive buffer during crises." },
+                    { type: 'D', textZh: "去深水埗搵平價維修，承受極高資料遺失風險", textEn: "Find a cheap repair shop, risking total data loss.", budget: -800, emergency: 0, stress: +25, axes: {s: -1, f: -1, p: 1}, principleZh: "貪平陷阱", principleEn: "Cheap Trap", quoteZh: "「博一博，單車變摩托！」", quoteEn: "'Take a gamble to save money!'", lessonZh: "在核心資產（如功課數據）上貪便宜，往往會引發毀滅性後果。", lessonEn: "Going cheap on core assets often triggers catastrophic results." },
+                    { type: 'E', textZh: "立刻向大學 IT 部門或圖書館求助借用公家機", textEn: "Seek help from University IT/Library to borrow a public laptop.", budget: 0, emergency: 0, stress: +10, axes: {s: 1, f: 1, p: 1}, principleZh: "善用公共體系", principleEn: "Public System Utility", quoteZh: "「交咗咁多學費，緊係要用盡學校資源求救！」", quoteEn: "'Paid so much tuition, must use school resources!'", lessonZh: "在驚慌時保持冷靜，想起並利用免費的公共安全網，是極高的應變能力。", lessonEn: "Using free public safety nets under panic shows high flexibility." }
                 ]
             }
         ];
@@ -642,11 +448,6 @@
             lang = lang === 'zh' ? 'en' : 'zh';
             document.getElementById('lang-btn-text').innerText = i18n[lang].langBtn;
             updateStaticText();
-            if (!document.getElementById('start-screen').classList.contains('hidden') && currentStage === 0) {
-                // At start screen
-            } else if (!document.getElementById('game-ui').classList.contains('hidden')) {
-                renderQuestion(); 
-            }
         }
 
         function updateStaticText() {
@@ -655,11 +456,7 @@
             document.getElementById('start-intro-title').innerHTML = t.startIntroTitle;
             document.getElementById('start-intro-1').innerHTML = t.startIntro1;
             document.getElementById('start-intro-2').innerHTML = t.startIntro2;
-            document.getElementById('start-obj-title').innerHTML = t.startObjTitle;
-            document.getElementById('obj-1').innerText = t.obj1;
-            document.getElementById('obj-2').innerText = t.obj2;
-            document.getElementById('obj-3').innerText = t.obj3;
-            document.getElementById('obj-4').innerText = t.obj4;
+            document.getElementById('btn-pre-form').innerText = t.btnPreForm;
             document.getElementById('start-btn').innerText = t.startBtn;
             
             document.getElementById('ui-budget-label').innerText = t.uiBudget;
@@ -668,30 +465,24 @@
             document.getElementById('btn-next-stage').innerText = t.btnNextStage;
             document.getElementById('btn-force-end').innerText = t.btnForceEnd;
             
-            // Fix for English Report Title
-            document.getElementById('report-title').innerText = t.reportTitle;
+            document.getElementById('label-modal-budget').innerText = t.modalBudget;
+            document.getElementById('label-modal-emergency').innerText = t.modalEmergency;
+            document.getElementById('label-modal-stress').innerText = t.modalStress;
             
-            document.getElementById('ui-dimension-title').innerText = t.uiDimTitle;
-            document.getElementById('ui-dim-1').innerText = t.dim1;
-            document.getElementById('ui-dim-2').innerText = t.dim2;
-            document.getElementById('ui-dim-3').innerText = t.dim3;
-            document.getElementById('ui-dim-4').innerText = t.dim4;
+            document.getElementById('report-title').innerText = t.reportTitle;
+            document.getElementById('ui-analysis-title').innerText = t.uiAnalysisTitle;
+            document.getElementById('ui-str').innerText = t.uiStr;
+            document.getElementById('ui-blk').innerText = t.uiBlk;
+            document.getElementById('ui-rec').innerText = t.uiRec;
             
             document.getElementById('ui-stats-title').innerText = t.uiStatsTitle;
             document.getElementById('ui-final-budget').innerText = t.uiFinalBudget;
             document.getElementById('ui-final-emergency').innerText = t.uiFinalEmergency;
             document.getElementById('ui-final-stress').innerText = t.uiFinalStress;
             
-            document.getElementById('ui-analysis-title').innerText = t.uiAnalysisTitle;
             document.getElementById('ui-principle-label').innerText = t.uiPrinciple;
             
-            document.getElementById('ui-reflection-title').innerText = t.uiReflection;
-            // Fix for English Reflection Questions
-            document.getElementById('ref1').innerText = t.ref1;
-            document.getElementById('ref2').innerText = t.ref2;
-            document.getElementById('ref3').innerText = t.ref3;
-            
-            // Fix for English Buttons
+            document.getElementById('btn-post-form').innerText = t.btnPostForm;
             document.getElementById('btn-download').innerText = t.btnDownload;
             document.getElementById('btn-restart').innerText = t.btnRestart;
             document.getElementById('report-watermark').innerText = t.watermark;
@@ -702,12 +493,13 @@
             emergencyFund = 0;
             stress = 0;
             currentStage = 0;
-            choiceHistory = { A: 0, B: 0, C: 0 };
+            b_social = 0; b_future = 0; b_proact = 0;
             endReason = "completed";
             
             document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('lang-switcher-container').classList.add('hidden'); 
+            document.getElementById('lang-switcher-container').classList.add('hidden'); // Hides button globally
             document.getElementById('report-screen').classList.add('hidden');
+            document.getElementById('fail-alert').classList.add('hidden');
             document.getElementById('game-ui').classList.remove('hidden');
             document.getElementById('game-ui').classList.add('flex');
             
@@ -745,14 +537,11 @@
                 
                 if (opt.budget < 0) moneyText = `<span class="text-red-500 font-bold ml-2">(${formatMoney(opt.budget)})</span>`;
                 else if (opt.budget > 0) moneyText = `<span class="text-green-500 font-bold ml-2">(+HK$${opt.budget})</span>`;
-                
                 if (opt.emergency > 0) eText = `<span class="text-green-600 font-bold ml-2 text-xs">🏦 +HK$${opt.emergency}</span>`;
-                
-                // Add Stress indicator specifically for options that increase stress
                 if (opt.stress > 0) sText = `<span class="text-red-500 font-bold ml-2 text-xs">🧠 +${opt.stress} ${lang === 'zh' ? '壓力' : 'Stress'}</span>`;
 
                 btn.innerHTML = `
-                    <div class="flex font-bold text-blue-600 mb-1">選項 ${opt.type}</div>
+                    <div class="flex font-bold text-blue-600 mb-1">${i18n[lang].optLabel} ${opt.type}</div>
                     <div class="text-gray-700 text-sm">${lang === 'zh' ? opt.textZh : opt.textEn} ${moneyText} ${eText} ${sText}</div>
                 `;
                 btn.onclick = () => selectOption(index);
@@ -777,7 +566,10 @@
                 }
             }
 
-            if(opt.type) choiceHistory[opt.type]++;
+            // Track Behaviour
+            b_social += opt.axes.s;
+            b_future += opt.axes.f;
+            b_proact += opt.axes.p;
             
             budget += actualBudgetChange;
             emergencyFund += actualEmergencyChange;
@@ -796,6 +588,7 @@
             document.getElementById('change-emergency').innerHTML = actualEmergencyChange !== 0 ? `<span class='text-green-600 font-bold'>${formatMoney(actualEmergencyChange)}</span>` : `<span class='text-gray-500'>-</span>`;
             document.getElementById('change-stress').innerHTML = opt.stress > 0 ? `<span class='text-red-500'>+${opt.stress}</span>` : `<span class='text-green-500'>${opt.stress}</span>`;
 
+            // Bankrupt logic check (strictly negative means game over)
             if (budget < 0) {
                 endReason = "bankrupt";
                 showWarning(t.warningBudgetTitle, t.warningBudgetDesc);
@@ -852,12 +645,8 @@
         function nextStage() {
             document.getElementById('feedback-modal').classList.add('hidden');
             currentStage++;
-            
-            if (currentStage >= gameData.length) {
-                generateReport();
-            } else {
-                renderQuestion();
-            }
+            if (currentStage >= gameData.length) generateReport();
+            else renderQuestion();
         }
 
         function forceEndGame() {
@@ -865,82 +654,58 @@
             generateReport();
         }
 
+        function renderReportText() {
+            const t = i18n[lang];
+            
+            document.getElementById('final-budget').innerText = formatMoney(budget);
+            document.getElementById('final-budget').className = budget < 0 ? "font-bold text-red-600" : "font-bold text-blue-600";
+            document.getElementById('final-emergency').innerText = formatMoney(emergencyFund);
+            document.getElementById('final-emergency').className = emergencyFund >= 1500 ? "font-bold text-green-600" : "font-bold text-gray-600";
+            document.getElementById('final-stress').innerText = stress + " / 100";
+            document.getElementById('final-stress').className = stress > 80 ? "font-bold text-red-600" : "font-bold text-green-600";
+
+            // Calculate Archetype String
+            const keyS = b_social > 0 ? "S" : "I";
+            const keyF = b_future >= 0 ? "F" : "P";
+            const keyP = b_proact >= 0 ? "R" : "A";
+            const archetypeKey = `${keyS}_${keyF}_${keyP}`;
+            
+            const archData = archetypes[lang][archetypeKey];
+            document.getElementById('archetype-name').innerText = archData.name;
+            document.getElementById('archetype-strength').innerText = archData.str;
+            document.getElementById('archetype-blind').innerText = archData.blk;
+            document.getElementById('archetype-rec').innerText = archData.rec;
+
+            // Fails Alert
+            const alertBox = document.getElementById('fail-alert');
+            const emojiEl = document.getElementById('report-emoji');
+            
+            if (endReason === "bankrupt") {
+                alertBox.classList.remove('hidden');
+                alertBox.innerText = t.failBankrupt;
+                emojiEl.innerText = "💸";
+            } else if (endReason === "stress") {
+                alertBox.classList.remove('hidden');
+                alertBox.innerText = t.failStress;
+                emojiEl.innerText = "🧟";
+            } else {
+                alertBox.classList.add('hidden');
+                emojiEl.innerText = "👑";
+            }
+        }
+
         function generateReport() {
             document.getElementById('game-ui').classList.add('hidden');
             document.getElementById('game-ui').classList.remove('flex');
             document.getElementById('report-screen').classList.remove('hidden');
-
-            const t = i18n[lang];
-
-            document.getElementById('final-budget').innerText = formatMoney(budget);
-            document.getElementById('final-budget').className = budget < 0 ? "font-bold text-red-600" : "font-bold text-blue-600";
             
-            document.getElementById('final-emergency').innerText = formatMoney(emergencyFund);
-            document.getElementById('final-emergency').className = emergencyFund >= 1500 ? "font-bold text-green-600" : "font-bold text-gray-600";
-            
-            document.getElementById('final-stress').innerText = stress + " / 100";
-            document.getElementById('final-stress').className = stress > 80 ? "font-bold text-red-600" : "font-bold text-green-600";
-
-            const e1 = document.getElementById('score-finance');
-            const e2 = document.getElementById('score-wellbeing');
-            const e3 = document.getElementById('score-responsibility');
-            const e4 = document.getElementById('score-flexibility');
-
-            if (endReason === "bankrupt") {
-                e1.innerText = t.scoreDebt; e1.className = "font-black text-red-600";
-                e2.innerText = stress > 60 ? t.scoreLow : t.scoreHigh;
-                e3.innerText = t.scoreLow; e3.className = "font-bold text-red-600";
-                e4.innerText = t.scoreLow;
-            } else if (endReason === "stress") {
-                e1.innerText = budget > 2000 ? t.scoreHigh : t.scoreMed;
-                e2.innerText = t.scoreLow; e2.className = "font-black text-red-600";
-                e3.innerText = t.scoreLow;
-                e4.innerText = t.scoreLow;
-            } else {
-                e1.innerText = (budget + emergencyFund) > 2000 ? t.scoreHigh : t.scoreMed;
-                e2.innerText = stress < 50 ? t.scoreHigh : (stress > 80 ? t.scoreLow : t.scoreMed);
-                e3.innerText = t.scoreHigh;
-                e4.innerText = emergencyFund >= 1500 ? t.scoreHigh : (emergencyFund > 0 ? t.scoreMed : t.scoreLow);
-                if (emergencyFund >= 1500) e4.className = "font-black text-green-600";
-            }
-
-            const analysisEl = document.getElementById('report-analysis');
-            const emojiEl = document.getElementById('report-emoji');
-
-            if (endReason === "bankrupt") {
-                emojiEl.innerText = "💸";
-                analysisEl.innerText = lang === 'zh' 
-                    ? "你過度依賴借貸與透支，陷入了信貸危機！追求短暫的快樂讓你在遇到突發危機時毫無防備。理財的第一步是量入為出，請警惕『先洗未來錢』的消費模式。" 
-                    : "You over-relied on debt and overspending! Pursuing short-term happiness left you defenseless against emergencies. Budgeting rule #1 is living within your means.";
-            } else if (endReason === "stress") {
-                emojiEl.innerText = "🧟";
-                analysisEl.innerText = lang === 'zh'
-                    ? "你選擇了『極度壓抑』的理財方式，雖然保護了金錢，但犧牲了健康與社交。請記住，不要為了節省而節省，需要花費的時候就需要花費，過度壓抑最終會導致崩潰或報復性消費。"
-                    : "You chose extreme deprivation. While you saved money, you sacrificed health and social connections. Remember: don't save just for the sake of saving. Spend when necessary, or you will burn out.";
-            } else {
-                if (choiceHistory.C >= 6 && emergencyFund >= 1500) {
-                    emojiEl.innerText = "👑";
-                    analysisEl.innerText = lang === 'zh'
-                        ? "完美！你展現了極高的理財情商。你不僅懂得尋找平價替代方案 (Option C)，更成功建立了足夠的緊急儲備金，輕鬆化解了 MacBook 危機。這是教科書級別的財務規劃！"
-                        : "Perfect! You demonstrated high financial EQ. You found smart alternatives and built a solid Emergency Fund that handled the MacBook crisis effortlessly. Textbook financial planning!";
-                } else if (choiceHistory.A > choiceHistory.B && choiceHistory.A > choiceHistory.C) {
-                    emojiEl.innerText = "🎢";
-                    analysisEl.innerText = lang === 'zh'
-                        ? "你屬於『享樂派』！雖然順利捱過學期，但你的預算一直處於危險邊緣，而且缺乏保護網。建議未來養成『先儲蓄、後消費』的習慣。"
-                        : "You are a Hedonist! You survived, but your budget was constantly on the edge without a safety net. Try adopting a 'Save first, Spend later' habit.";
-                } else {
-                    emojiEl.innerText = "⚖️";
-                    analysisEl.innerText = lang === 'zh'
-                        ? "你成功在金錢與壓力之間取得了平衡，順利度過考驗。雖然未能累積龐大的儲備，但你已經掌握了基本的取捨法則 (Trade-offs)。繼續保持對非固定開支的敏感度！"
-                        : "You successfully balanced money and stress. While you didn't build massive savings, you understand basic trade-offs. Keep being mindful of variable expenses!";
-                }
-            }
+            renderReportText();
         }
 
         function resetGame() {
             document.getElementById('report-screen').classList.add('hidden');
             document.getElementById('start-screen').classList.remove('hidden');
-            document.getElementById('lang-switcher-container').classList.remove('hidden'); 
+            document.getElementById('lang-switcher-container').classList.remove('hidden'); // Re-show language button on start screen
             
             document.getElementById('stage-indicator').classList.replace('bg-red-100', 'bg-blue-50');
             document.getElementById('stage-indicator').classList.replace('text-red-600', 'text-blue-500');
@@ -953,19 +718,13 @@
             
             btn.innerText = lang === 'zh' ? "⏳ 正在生成圖片..." : "⏳ Generating...";
             
-            html2canvas(element, {
-                scale: 2,
-                backgroundColor: "#ffffff",
-                windowWidth: 480
-            }).then(canvas => {
+            html2canvas(element, { scale: 2, backgroundColor: "#ffffff", windowWidth: 480 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = lang === 'zh' ? 'WiseSpend-診斷報告.png' : 'WiseSpend-Report.png';
+                link.download = lang === 'zh' ? 'WiseSpend-行為診斷報告.png' : 'WiseSpend-Behaviour-Profile.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
                 btn.innerText = lang === 'zh' ? "✅ 下載成功！" : "✅ Downloaded!";
-                setTimeout(() => { 
-                    btn.innerText = t.btnDownload; 
-                }, 3000);
+                setTimeout(() => { btn.innerText = t.btnDownload; }, 3000);
             });
         }
 
