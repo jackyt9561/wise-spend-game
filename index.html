@@ -354,11 +354,12 @@ body{background-image:radial-gradient(#173b340a 1px,transparent 1px);background-
 #pre-invitation #btn-pre-form::before,#post-survey-action::before{
  content:"";position:absolute;left:calc(50% - .5em);top:-1.6em;
  width:1em;height:1.125em;pointer-events:none;
- background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2018%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23173f35%22%20d%3D%22M4%200h8v3h2v2h2v6h-2v2h-3v4H9v1H7v-1H6v-6H4V9H2V5h2z%22%2F%3E%3Cpath%20fill%3D%22%23dfeacb%22%20d%3D%22M5%201h6v3h2v2h2v4h-2v2h-2V7H9v9H7V8H5V6H4V5h1z%22%2F%3E%3Cpath%20fill%3D%22%23a8c581%22%20d%3D%22M5%201h6v2H5z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;image-rendering:pixelated;
- animation:survey-hand-float 1.4s ease-in-out infinite;
+ background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2018%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23996119%22%20d%3D%22M4%200h8v3h2v2h2v6h-2v2h-3v4H9v1H7v-1H6v-6H4V9H2V5h2z%22%2F%3E%3Cpath%20fill%3D%22%23ffce45%22%20d%3D%22M5%201h6v3h2v2h2v4h-2v2h-2V7H9v9H7V8H5V6H4V5h1z%22%2F%3E%3Cpath%20fill%3D%22%23ffe990%22%20d%3D%22M5%201h6v2H5zM7%208h1v7H7z%22%2F%3E%3Cpath%20fill%3D%22%23eea92d%22%20d%3D%22M11%204h2v2h2v4h-2V7h-2z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;image-rendering:pixelated;
+ animation:survey-hand-float 1.4s ease-in-out infinite!important;
+ animation-play-state:running!important;will-change:transform;
 }
-@keyframes survey-hand-float{0%,100%{transform:translateY(-.12em)}50%{transform:translateY(.12em)}}
-@media(prefers-reduced-motion:reduce){#pre-invitation #btn-pre-form::before,#post-survey-action::before{animation:none}}
+@keyframes survey-hand-float{0%,100%{transform:translateY(-.2em)}50%{transform:translateY(.2em)}}
+/* Keep only these small survey cues moving on both mobile and desktop. */
 </style>
 </head><body><div class="app-container">
 <header class="brandbar"><span class="brandmark" aria-hidden="true">w</span><span class="brandname">WiseSpend.</span><span class="brandtag" id="brandtag"></span></header>
