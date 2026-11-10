@@ -345,7 +345,22 @@ body{background-image:radial-gradient(#173b340a 1px,transparent 1px);background-
 /* Same content alignment for anchor and button actions, in both languages. */
 .save-buttons{align-items:stretch}.save-buttons>.action{display:flex;align-items:center;justify-content:center;text-align:center;min-height:60px;line-height:1.5;white-space:normal}
 #post-survey-action{background:var(--ink);color:#fff;border-color:var(--ink)}
-</style><style>#pre-invitation #btn-pre-form{background:var(--ink);color:#fff;border:1px solid var(--ink);display:flex;align-items:center;justify-content:center}</style></head><body><div class="app-container">
+</style><style>#pre-invitation #btn-pre-form{background:var(--ink);color:#fff;border:1px solid var(--ink);display:flex;align-items:center;justify-content:center}</style>
+<style id="survey-pixel-hand-style">
+/* Decorative, font-sized survey cues; no extra click target or translated text. */
+#pre-invitation #btn-pre-form,#post-survey-action{position:relative;overflow:visible}
+#pre-invitation #btn-pre-form{margin-top:2.25em}
+.save-buttons{padding-top:1.75em;row-gap:2em}
+#pre-invitation #btn-pre-form::before,#post-survey-action::before{
+ content:"";position:absolute;left:calc(50% - .5em);top:-1.6em;
+ width:1em;height:1.125em;pointer-events:none;
+ background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2018%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23173f35%22%20d%3D%22M4%200h8v3h2v2h2v6h-2v2h-3v4H9v1H7v-1H6v-6H4V9H2V5h2z%22%2F%3E%3Cpath%20fill%3D%22%23dfeacb%22%20d%3D%22M5%201h6v3h2v2h2v4h-2v2h-2V7H9v9H7V8H5V6H4V5h1z%22%2F%3E%3Cpath%20fill%3D%22%23a8c581%22%20d%3D%22M5%201h6v2H5z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;image-rendering:pixelated;
+ animation:survey-hand-float 1.4s ease-in-out infinite;
+}
+@keyframes survey-hand-float{0%,100%{transform:translateY(-.12em)}50%{transform:translateY(.12em)}}
+@media(prefers-reduced-motion:reduce){#pre-invitation #btn-pre-form::before,#post-survey-action::before{animation:none}}
+</style>
+</head><body><div class="app-container">
 <header class="brandbar"><span class="brandmark" aria-hidden="true">w</span><span class="brandname">WiseSpend.</span><span class="brandtag" id="brandtag"></span></header>
 <div id="lang-switcher-container"><button onclick="toggleLanguage()"><span id="lang-btn-text">English</span></button></div>
 <main id="start-screen"><div class="hero"><h1 id="start-title"></h1><div id="play-invitation"></div><p class="game-goal" id="game-goal"></p><div class="semester-card"><div class="card-top"><span id="wallet-title"></span><span id="card-level"></span></div><div class="card-cash"><small>HK$</small>4,000<span style="color:#91a48b">.00</span></div><div class="card-bottom"><span id="wallet-days"></span><span id="wallet-scenes"></span><span id="wallet-choice"></span></div></div><div class="journey" id="journey"></div></div>
